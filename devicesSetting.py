@@ -24,7 +24,7 @@ DefaultDeviceOptions = {
 
 DefaultUserInfo = {
         'PIN'       : '1',
-        'Name'      : '马云',
+        'Name'      : '马云'.encode('utf-8'),
         'Pri'       : '0' ,   # 权限(14 管理员,0 普通用户)
         'Passwd'    : '123',
         'Card'      : '00001',              #用户卡号
