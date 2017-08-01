@@ -4,6 +4,7 @@ import time
 from databaseHandler import DB_Handler,DataBaseHandler
 from heartBeatHandler import HeartBeatHandler
 from cmd_defines import CMD_Engine
+from connectToServer import ServerHandler,SERVER_Handler
 
 DevicesHandler = {}
 
@@ -64,6 +65,7 @@ class DeviceHandler ():
         self.cmdEngine.genCmd_dev_info();
         self.cmdEngine.genCmd_check();
         self.heart_beat = HeartBeatHandler(sn,self.cmdEngine);
+        self.serverhandler = SERVER_Handler;
 
     def updateInfor(self,info):
         self.dev_info = info
@@ -94,6 +96,7 @@ class DeviceHandler ():
         self.db_handler.update_devicesOptions(self.sn,self.options)
         print("last_record_time = %s" % time.strftime("%Y-%m-%d %H:%M:%S",tmp_time))
         print(record)
+        self.serverhandler.newRecord(record)
 
     def get_cmd_list(self):
         return self.cmdEngine.get_genCmd_lines();

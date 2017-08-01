@@ -30,18 +30,46 @@ class ServerHandler() :
         request = HTTPRequest(url=self.url_list['updateStudent'],method='POST', body=data_send,
                               follow_redirects=False,proxy_host='135.251.103.45', proxy_port=8080,
                               connect_timeout=200, request_timeout=600)
-        self.http_client.fetch(request, self.print_response)
+        self.http_client.fetch(request, self.resp_updateStudents)
+    def resp_updateStudents(self,response):
+        print("resp_updateStudents : ",response.body)
 
-    def print_response(self,response):
-        print(response.body)
 
+    def newRecord(self,record):
+        data = {'token':ClIENT_TOKEN,'record':record}
+        data_send = json.dumps(data)
+        print("data_send : ", data_send)
+        request = HTTPRequest(url=self.url_list['NewRecord'],method='POST', body=data_send,
+                              follow_redirects=False,proxy_host='135.251.103.45', proxy_port=8080,
+                              connect_timeout=200, request_timeout=600)
+        self.http_client.fetch(request, self.resp_newRecord)
+    def resp_newRecord(self,response):
+        print("resp_newRecord : ", response.body)
+
+
+    def syncAttLog(self,records):
+        data = {'token':ClIENT_TOKEN,'records':records}
+        data_send = json.dumps(data)
+        request = HTTPRequest(url=self.url_list['SyncAttLog'],method='POST', body=data_send,
+                              follow_redirects=False,proxy_host='135.251.103.45', proxy_port=8080,
+                              connect_timeout=200, request_timeout=600)
+        self.http_client.fetch(request, self.resp_syncAttLog)
+    def resp_syncAttLog(self,response):
+        print("resp_syncAttLog : ", response.body)
+
+
+    def getServerCmd(self):
+        data = {'token':ClIENT_TOKEN}
+        data_send = json.dumps(data)
+        request = HTTPRequest(url=self.url_list['GetCmd'],method='POST', body=data_send,
+                              follow_redirects=False,proxy_host='135.251.103.45', proxy_port=8080,
+                              connect_timeout=200, request_timeout=600)
+        self.http_client.fetch(request, self.resp_getServerCmd)
+    def resp_getServerCmd(self,response):
+        print("resp_getServerCmd : ", response.body)
 
 
 SERVER_Handler = ServerHandler();
-
-
-
-
 
 if __name__ == "__main__":
     SvHd = SERVER_Handler

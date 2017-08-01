@@ -1,0 +1,77 @@
+New AttLog data_request :  
+	{
+		"token": "gh_2837e31e28ed", 
+		"record": {
+			"PIN": "1", 
+			"TIME": "2017-08-01 13:40:38", 
+			"STATUS": 255, 
+			"VERIFY": "2", 
+			"WORKCODE": "0", 
+			"RESERVED1": "0",
+ 			"RESERVED2": "0"
+ 		}
+ 	}
+New AttLog data_request : 
+	{"state" : 'OK'}
+
+
+Sync AttLog data_request :  
+	{
+		"token": "gh_2837e31e28ed", 
+		"records": [
+			{
+				"PIN": "1", 
+				"TIME": "2017-08-01 13:40:38", 
+				"STATUS": 255, 
+				"VERIFY": "2", 
+				"WORKCODE": "0", 
+				"RESERVED1": "0",
+	 			"RESERVED2": "0"
+	 		},
+			{
+				"PIN": "2", 
+				"TIME": "2017-08-01 13:41:38", 
+				"STATUS": 255, 
+				"VERIFY": "2", 
+				"WORKCODE": "0", 
+				"RESERVED1": "0",
+	 			"RESERVED2": "0"
+	 		},	
+	 		....
+	 	] 		
+ 	} 
+Sync AttLog data_request : 
+	{"state" : 'OK'}
+
+
+Update User Infor data_request :
+	{
+		"token": "gh_2837e31e28ed"
+	}
+Update User Infor data_response :
+	{
+		"state"  : 'OK',
+		"op_code": "add",  # other opcode: "dele"/"change"
+		"users" : [
+				{
+	        'PIN'       : '1',
+	        'Name'      : '陈',
+	        'Pri'       : '0' ,   # 权限(14 管理员,0 普通用户)
+	        'Passwd'    : '123',
+	        'Card'      : '15895470',              #用户卡号
+	        'Grp'       : '1',                  #组别(用于门禁)
+	        'TZ'        : '0001000100000000',   #时段(用于门禁)				
+				},
+				.......
+		]
+	}
+
+Get Command data_request :
+	{
+		"token": "gh_2837e31e28ed"
+	}
+Get Command data_response :
+	{
+		"getErroLog" : {'start': s_timeStamp,'end':e_timeStamp},
+		.....
+	}

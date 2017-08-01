@@ -23,7 +23,7 @@ class CdataHandler(RequestHandler):
                 'VERIFY' : tmp_data[3],
                 'WORKCODE' : tmp_data[4],
                 'RESERVED1': tmp_data[5],
-                'RESERVED2': tmp_data[6],
+                'RESERVED2': tmp_data[6][:-1],
             }
             dev_handler.new_record_log(data)
         elif table == 'OPERLOG' :
