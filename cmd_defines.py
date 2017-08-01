@@ -2,6 +2,7 @@
 
 from databaseHandler import DB_Handler,DataBaseHandler
 
+
 CMD_UPDATE_DEV_USER     = 'DATA UPDATE USERINFO'
 CMD_DEL_DEV_USER        = 'DATA DELETE USERINFO'
 CMD_QUERY_DEV_USER      = "DATA QUERY USERINFO"
@@ -34,6 +35,9 @@ class CMD_Engine() :
                            infor['Card']))
         self.cmd_line_buf[self.cmdIds] = {'cmd':cmd_line,'state':CMD_NOT_SEND}
         print(cmd_line)
+        print("Name def:", infor['Name'].encode())
+        print("Name gbk:", infor['Name'].encode('gbk'))
+        print("Name utf-8:", infor['Name'].encode('utf-8'))
 
     def genCmd_delet_user(self,infor):
         self.cmdIds += 1

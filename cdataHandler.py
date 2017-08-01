@@ -15,8 +15,7 @@ class CdataHandler(RequestHandler):
     def process_talbes(self,table,content,dev_handler):
         data = {}
         if table == 'ATTLOG':
-            tmp_data = str(content)[2:-3].split('\\t')
-            print(tmp_data)
+            tmp_data = content.split('\t')
             data = {
                 'PIN' : tmp_data[0],
                 'TIME' : tmp_data[1],
@@ -28,8 +27,8 @@ class CdataHandler(RequestHandler):
             }
             dev_handler.new_record_log(data)
         elif table == 'OPERLOG' :
-            if str(content)[2:6] == 'USER':
-                tmp_data = str(content)[7:-3].split('\\t')
+            if content[0:4] == 'USER':
+                tmp_data = content.split('\t')
                 for it in tmp_data :
                     session = it.split('=')
                     data[session[0]] = session[1]
@@ -63,7 +62,8 @@ class CdataHandler(RequestHandler):
 
 
     def post(self, post):
-        content = self.request.body
+        print(self.request.body)
+        content = str(self.request.body,encoding = "gbk")
         args = self.request.arguments
         getArgs = {}
         for a in args:
@@ -78,6 +78,7 @@ class CdataHandler(RequestHandler):
 
         dev_handler = GetDeviceHandler(sn)
         print('The checking in records data: ', content, '\n')
+
         if 'table' in getArgs :
             CdataHandler.process_talbes(self,getArgs['table'],content,dev_handler)
 

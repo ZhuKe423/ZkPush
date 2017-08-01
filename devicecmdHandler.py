@@ -2,11 +2,13 @@
 
 from tornado.web import RequestHandler
 from devicesSetting import GetDeviceHandler,DeviceHandler
-
+import json
 class DeviceCmdHandler(RequestHandler):
     def post(self, post):
-        content = self.request.body
-        lines = str(content)[2:-3].split('\\n')
+        content = str(self.request.body,encoding = "utf-8")
+        print("Device CMD Response:")
+        #print(content)
+        lines = content.split('\n')
         print('The device command post data: ', lines)
         args = self.request.arguments
         getArgs = {}

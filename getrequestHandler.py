@@ -37,7 +37,7 @@ class GetrequestHandler(RequestHandler):
             dev_handler.interalBeat()
             cmds = dev_handler.get_cmd_list()
             for cmd in cmds:
-                self.write(cmd)
+                self.write(cmd.encode('gbk'))
             #self.write('C:122:INFO\n')
             pass
 

@@ -24,10 +24,10 @@ DefaultDeviceOptions = {
 
 DefaultUserInfo = {
         'PIN'       : '1',
-        'Name'      : '马云'.encode('utf-8'),
+        'Name'      : '陈',
         'Pri'       : '0' ,   # 权限(14 管理员,0 普通用户)
         'Passwd'    : '123',
-        'Card'      : '00001',              #用户卡号
+        'Card'      : '15895470',              #用户卡号
         'Grp'       : '1',                  #组别(用于门禁)
         'TZ'        : '0001000100000000',   #时段(用于门禁)
 }
@@ -84,7 +84,7 @@ class DeviceHandler ():
 
         #for test
         #self.update_user_infor(DefaultUserInfo)
-        self.cmdEngine.genCmd_query_user(DefaultUserInfo['PIN'])
+        #self.cmdEngine.genCmd_query_user(DefaultUserInfo['PIN'])
 
     def new_record_log(self,record):
         self.last_record_time = int(time.time())
