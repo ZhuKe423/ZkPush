@@ -15,17 +15,23 @@ class CdataHandler(RequestHandler):
     def process_talbes(self,table,content,dev_handler):
         data = {}
         if table == 'ATTLOG':
-            tmp_data = content.split('\t')
-            data = {
-                'PIN' : tmp_data[0],
-                'TIME' : tmp_data[1],
-                'STATUS': int(tmp_data[2]),
-                'VERIFY' : tmp_data[3],
-                'WORKCODE' : tmp_data[4],
-                'RESERVED1': tmp_data[5],
-                'RESERVED2': tmp_data[6][:-1],
-            }
-            dev_handler.new_record_log(data)
+            tmp_list = content.split('\n')
+            for tmp_data in tmp_list:
+                if tmp_data != '' :
+                    tmp_data = content.split('\t')
+                    data = {
+                        'PIN' : tmp_data[0],
+                        'TIME' : tmp_data[1],
+                        'STATUS': int(tmp_data[2]),
+                        'VERIFY' : tmp_data[3],
+                        'WORKCODE' : tmp_data[4],
+                        'RESERVED1': tmp_data[5],
+                        'RESERVED2': tmp_data[6][:-1],
+                    }
+                    dev_handler.new_record_log(data)
+                else :
+                    dev_handler.new_record_log('')
+
         elif table == 'OPERLOG' :
             if content[0:4] == 'USER':
                 tmp_data = content.split('\t')

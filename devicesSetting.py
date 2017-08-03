@@ -2,7 +2,7 @@
 
 import time
 from databaseHandler import DB_Handler,DataBaseHandler
-from heartBeatHandler import HeartBeatHandler
+from heartBeatHandler import HeartBeatHandler,SYNC_ATTLOG_SENDING_SERVER
 from cmd_defines import CMD_Engine
 from connectToServer import ServerHandler,SERVER_Handler
 
@@ -24,7 +24,7 @@ DefaultDeviceOptions = {
 }
 
 DefaultUserInfo = {
-        'PIN'       : '1',
+        'PIN'       : '101010101010',
         'Name'      : '陈',
         'Pri'       : '0' ,   # 权限(14 管理员,0 普通用户)
         'Passwd'    : '123',
@@ -49,6 +49,7 @@ class DeviceHandler ():
     last_record_time = 0
     last_info_time = 0
     options = None
+    sync_attlog_records = []
 
     def __init__(self,sn) :
         self.sn = sn
@@ -64,8 +65,9 @@ class DeviceHandler ():
         self.cmdEngine = CMD_Engine(sn)
         self.cmdEngine.genCmd_dev_info();
         self.cmdEngine.genCmd_check();
-        self.heart_beat = HeartBeatHandler(sn,self.cmdEngine);
-        self.serverhandler = SERVER_Handler;
+        self.heart_beat = HeartBeatHandler(sn,self.cmdEngine)
+        self.serverhandler = SERVER_Handler
+        self.serverhandler.updateStudents(sn=self.sn)
 
     def updateInfor(self,info):
         self.dev_info = info
@@ -87,6 +89,13 @@ class DeviceHandler ():
         #for test
         #self.update_user_infor(DefaultUserInfo)
         #self.cmdEngine.genCmd_query_user(DefaultUserInfo['PIN'])
+        today = time.strftime("%Y-%m-%d",time.localtime(time.time()))
+        today_s = today+" 00:00:01"
+        today_e = today+" 23:59:59"
+        #self.cmdEngine.genCmd_query_log(today_s,today_e)
+
+    def add_sync_record(self,record):
+        self.sync_attlog_records.append(record)
 
     def new_record_log(self,record):
         self.last_record_time = int(time.time())
@@ -95,8 +104,17 @@ class DeviceHandler ():
         self.options['ATTLOGStamp'] = str(self.last_record_time)
         self.db_handler.update_devicesOptions(self.sn,self.options)
         print("last_record_time = %s" % time.strftime("%Y-%m-%d %H:%M:%S",tmp_time))
-        print(record)
-        self.serverhandler.newRecord(record)
+        #print(record)
+        if record == '':
+            print('recoder is NULL')
+            return
+
+        if self.heart_beat.is_in_sync_state() :
+            print("Sync record : " , record)
+            self.add_sync_record(record)
+        else :
+            print("New record :" , record)
+            self.serverhandler.newRecord(record,sn=self.sn)
 
     def get_cmd_list(self):
         return self.cmdEngine.get_genCmd_lines();
@@ -114,6 +132,7 @@ class DeviceHandler ():
                 cmd_response['cmd'] = session[2].split('=')[1]
                 tmpcmd = cmd_response['cmd']
                 #print("tmpcmd : ",tmpcmd)
+                self.heart_beat.check_sync_attlog(cmd_response,records=self.sync_attlog_records)
                 self.cmdEngine.response_cmd_line(cmd_response)
             elif tmpcmd == 'INFO' :
                 session = res_cmd.split('=')
@@ -129,5 +148,6 @@ class DeviceHandler ():
 
     def update_user_infor(self,user):
         self.cmdEngine.genCmd_update_user(user)
+
     def del_user(self,user):
         self.cmdEngine.genCmd_delet_user(user)

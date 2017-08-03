@@ -1,4 +1,6 @@
-New AttLog data_request :  
+# -*- coding: utf-8 -*-
+
+New AttLog data_request :
 	{
 		"token": "gh_2837e31e28ed", 
 		"record": {
@@ -54,13 +56,13 @@ Update User Infor data_response :
 		"op_code": "add",  # other opcode: "dele"/"change"
 		"users" : [
 				{
-	        'PIN'       : '1',
-	        'Name'      : '³Â',
-	        'Pri'       : '0' ,   # È¨ÏŞ(14 ¹ÜÀíÔ±,0 ÆÕÍ¨ÓÃ»§)
-	        'Passwd'    : '123',
-	        'Card'      : '15895470',              #ÓÃ»§¿¨ºÅ
-	        'Grp'       : '1',                  #×é±ğ(ÓÃÓÚÃÅ½û)
-	        'TZ'        : '0001000100000000',   #Ê±¶Î(ÓÃÓÚÃÅ½û)				
+                    'PIN'       : '1',
+                    'Name'      : 'é™ˆ',
+                    'Pri'       : '0' ,   # æƒé™(14 ç®¡ç†å‘˜,0 æ™®é€šç”¨æˆ·)
+                    'Passwd'    : '123',
+                    'Card'      : '15895470',              #ç”¨æˆ·å¡å·
+                    'Grp'       : '1',                  #ç»„åˆ«(ç”¨äºé—¨ç¦)
+                    'TZ'        : '0001000100000000',   #æ—¶æ®µ(ç”¨äºé—¨ç¦)
 				},
 				.......
 		]
@@ -73,5 +75,7 @@ Get Command data_request :
 Get Command data_response :
 	{
 		"getErroLog" : {'start': s_timeStamp,'end':e_timeStamp},
+		"updatestd"  : '',
+		"syncAttLog" : '',
 		.....
 	}

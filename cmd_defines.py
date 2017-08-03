@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from databaseHandler import DB_Handler,DataBaseHandler
-
+import time
 
 CMD_UPDATE_DEV_USER     = 'DATA UPDATE USERINFO'
 CMD_DEL_DEV_USER        = 'DATA DELETE USERINFO'
@@ -42,49 +42,50 @@ class CMD_Engine() :
     def genCmd_delet_user(self,infor):
         self.cmdIds += 1
         cmd_line = format("C:%03d:%s PIN=%s\n" % (self.cmdIds,CMD_DEL_DEV_USER,infor['PIN']))
-        self.cmd_line_buf[self.cmdIds] = {'cmd':cmd_line,'state':CMD_NOT_SEND}
+        self.cmd_line_buf[self.cmdIds] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
         print(cmd_line)
 
     def genCmd_query_user(self,pin):
         self.cmdIds += 1
         cmd_line = format("C:%03d:%s PIN=%s\n" % (self.cmdIds,CMD_QUERY_DEV_USER,pin))
-        self.cmd_line_buf[self.cmdIds] = {'cmd':cmd_line,'state':CMD_NOT_SEND}
+        self.cmd_line_buf[self.cmdIds] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
         print(cmd_line)
 
     def genCmd_query_log(self,startTime,endTime):
         self.cmdIds += 1
         cmd_line = format("C:%03d:%s StartTime=%s\tEndTime=%s\n" % (self.cmdIds,CMD_QUERY_DEV_ATTLOG,startTime,endTime))
-        self.cmd_line_buf[self.cmdIds] = {'cmd':cmd_line,'state':CMD_NOT_SEND}
+        self.cmd_line_buf[self.cmdIds] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
         print(cmd_line)
+        return self.cmdIds
 
     def genCmd_dev_info(self):
         self.cmdIds += 1
         cmd_line = format("C:%03d:%s\n" % (self.cmdIds, CMD_DEV_INFO))
-        self.cmd_line_buf[self.cmdIds] = {'cmd':cmd_line,'state':CMD_NOT_SEND}
+        self.cmd_line_buf[self.cmdIds] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
         print(cmd_line)
 
     def genCmd_check(self):
         self.cmdIds += 1
         cmd_line = format("C:%03d:%s\n" % (self.cmdIds, CMD_DEV_CHECK))
-        self.cmd_line_buf[self.cmdIds] = {'cmd':cmd_line,'state':CMD_NOT_SEND}
+        self.cmd_line_buf[self.cmdIds] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
         print(cmd_line)
 
     def genCmd_clear_attLog(self):
         self.cmdIds += 1
         cmd_line = format("C:%03d:%s\n" % (self.cmdIds, CMD_CLEAR_DEV_ATTLOG))
-        self.cmd_line_buf[self.cmdIds] = {'cmd':cmd_line,'state':CMD_NOT_SEND}
+        self.cmd_line_buf[self.cmdIds] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
         print(cmd_line)
 
     def genCmd_clear_dataAll(self):
         self.cmdIds += 1
         cmd_line = format("C:%03d:%s\n" % (self.cmdIds, CMD_CLEAR_DEV_ALL))
-        self.cmd_line_buf[self.cmdIds] = {'cmd':cmd_line,'state':CMD_NOT_SEND}
+        self.cmd_line_buf[self.cmdIds] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
         print(cmd_line)
 
     def genCmd_get_new_log(self):
         self.cmdIds += 1
         cmd_line = format("C:%03d:%s\n" % (self.cmdIds, CMD_GET_NEW_LOG))
-        self.cmd_line_buf[self.cmdIds] = {'cmd':cmd_line,'state':CMD_NOT_SEND}
+        self.cmd_line_buf[self.cmdIds] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
         print(cmd_line)
 
     def get_genCmd_lines(self):
@@ -106,10 +107,12 @@ class CMD_Engine() :
                 self.cmd_line_buf[response['cmdIds']]['state'] = CMD_HAS_SEND
             else :
                 self.cmd_line_buf[response['cmdIds']]['state'] = CMD_EXC_FAIL
+                date_time = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(cmd,response['timestamp']))
                 record = {
                         'SN'  : self.sn,
                         'type': 'CMD_FAILED',
-                        'content': format("%s ;return %d " % (self.cmd_line_buf[response.cmdIds].cmd,response.state))
+                        'content': format("%s ;return %d . %s" % (self.cmd_line_buf[response['cmdIds']].cmd,response['state'],date_time)),
+                        'wTime': time.time()
                     }
                 self.db_handler.add_error_log(record)
 
