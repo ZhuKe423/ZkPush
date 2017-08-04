@@ -4,7 +4,7 @@ import time
 from databaseHandler import DB_Handler,DataBaseHandler
 from heartBeatHandler import HeartBeatHandler,SYNC_ATTLOG_SENDING_SERVER
 from cmd_defines import CMD_Engine
-from connectToServer import ServerHandler,SERVER_Handler
+from connectToServer import ServerHandler
 
 DevicesHandler = {}
 
@@ -43,6 +43,14 @@ def GetDeviceHandler(sn):
         return DevicesHandler[sn]
 
 
+def Devices_Common_Process(cmd,value):
+    for sn in DevicesHandler:
+        DevicesHandler[sn].cmd_process(cmd,value)
+    return
+
+
+SERVER_Handler = ServerHandler(Devices_Common_Process);
+
 class DeviceHandler ():
     sn = ''
     dev_info = {}
@@ -65,8 +73,8 @@ class DeviceHandler ():
         self.cmdEngine = CMD_Engine(sn)
         self.cmdEngine.genCmd_dev_info();
         self.cmdEngine.genCmd_check();
-        self.heart_beat = HeartBeatHandler(sn,self.cmdEngine)
         self.serverhandler = SERVER_Handler
+        self.heart_beat = HeartBeatHandler(sn,self.cmdEngine,self.serverhandler)
         self.serverhandler.updateStudents(sn=self.sn)
 
     def updateInfor(self,info):
@@ -151,3 +159,12 @@ class DeviceHandler ():
 
     def del_user(self,user):
         self.cmdEngine.genCmd_delet_user(user)
+
+    def cmd_process(self,cmd,value):
+        if cmd == 'syncAttLog' :
+            self.heart_beat.manual_sync_attLog()
+        elif cmd == 'updateUser' :
+            print("updateUser ",value)
+        elif cmd == 'deleteUser' :
+            print("deleteUser : ",value)
+        pass

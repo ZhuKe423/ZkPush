@@ -2,7 +2,7 @@
 
 import time
 from databaseHandler import DB_Handler,DataBaseHandler
-from connectToServer import ServerHandler,SERVER_Handler
+from connectToServer import ServerHandler
 import datetime
 
 Default_HeartBeatSetting = {
@@ -33,7 +33,7 @@ class HeartBeatHandler():
     sync_time_st    = 0
     tomorrow_st     = 0
     
-    def __init__(self,sn,cmdEngine) :
+    def __init__(self,sn,cmdEngine,server) :
         self.record_over_flag = False
         self.db_handler = DB_Handler
         self.settings = Default_HeartBeatSetting
@@ -42,7 +42,7 @@ class HeartBeatHandler():
         self.last_beat_time = self.settings['last_beat_time']
         self.last_getCmd_Server = self.settings['last_getCmd_Server']
         self.cmdEngine = cmdEngine
-        self.serverhandler = SERVER_Handler
+        self.serverhandler = server
         self.update_info_for_newDay()
 
     def update_info_for_newDay(self):
@@ -69,6 +69,11 @@ class HeartBeatHandler():
     def set_sync_state(self,value):
         self.today_sync_attLog = value
 
+    def manual_sync_attLog(self):
+        self.sync_cmdId = self.cmdEngine.genCmd_query_log(self.str_today_s, self.str_today_e)
+        self.set_sync_state(SYNC_ATTLOG_CMD_SENDING)
+        print('HB manual_sync_attLog :  %s', time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time())))
+
     def hearbeat(self):
         t_now = int(time.time())
         timestamp = {}
@@ -91,10 +96,10 @@ class HeartBeatHandler():
         if self.today_sync_attLog == SYNC_ATTLOG_SENDING_SERVER :
             self.set_sync_state(SYNC_ATTLOG_SENDED)
         if self.today_sync_attLog == SYNC_ATTLOG_SENDED :
-            self.cmdEngine.genCmd_clear_attLog(self.settings['SN']);
+            self.cmdEngine.genCmd_clear_attLog(self.settings['SN'])
             self.set_sync_state(SYNC_ATTLOG_DONE)
 
-        self.last_beat_time = t_now;
+        self.last_beat_time = t_now
         timestamp['last_beat_time'] = t_now
         self.db_handler.update_heartbeat_time(self.settings['SN'],timestamp)
         print("hearbeat time=%s" % self.last_beat_time)

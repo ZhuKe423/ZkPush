@@ -2,10 +2,11 @@
 
 New AttLog data_request :
 	{
-		"token": "gh_2837e31e28ed", 
+		"token": "gh_2837e31e28ed",
+		"SN"   : "XXXXXXXXXXXXXXX",      #设备SN 号
 		"record": {
-			"PIN": "1", 
-			"TIME": "2017-08-01 13:40:38", 
+			"PIN": "1",
+			"TIME": "2017-08-01 13:40:38",
 			"STATUS": 255, 
 			"VERIFY": "2", 
 			"WORKCODE": "0", 
@@ -14,12 +15,13 @@ New AttLog data_request :
  		}
  	}
 New AttLog data_request : 
-	{"state" : 'OK'}
+	{"state" : 'OK',"SN":"XXXXXXXXXXXXXXX"}
 
 
 Sync AttLog data_request :  
 	{
-		"token": "gh_2837e31e28ed", 
+		"token": "gh_2837e31e28ed",
+		"SN"   : "XXXXXXXXXXXXXXX",      #设备SN 号
 		"records": [
 			{
 				"PIN": "1", 
@@ -43,17 +45,20 @@ Sync AttLog data_request :
 	 	] 		
  	} 
 Sync AttLog data_request : 
-	{"state" : 'OK'}
+	{"state" : 'OK',"SN":"XXXXXXXXXXXXXXX"}
 
 
 Update User Infor data_request :
 	{
 		"token": "gh_2837e31e28ed"
+		"SN"   : "XXXXXXXXXXXXXXX"
 	}
 Update User Infor data_response :
 	{
 		"state"  : 'OK',
+		"SN"   : "XXXXXXXXXXXXXXX",      #设备SN 号
 		"op_code": "add",  # other opcode: "dele"/"change"
+		"timeStamp" : 122344556        *这个必须要有，timeStamp 是用户数据更新的时间戳，不是访问时当前的时间戳， 设备这侧发现是跟上一次的时间戳值一样就会放弃修改。
 		"users" : [
 				{
                     'PIN'       : '1',
@@ -68,14 +73,44 @@ Update User Infor data_response :
 		]
 	}
 
+Device Command Error Logs:
+    {
+        "token": "gh_2837e31e28ed",
+        "log_data" :
+                {
+                    'SN'  : 'XXXXXXXXXXXXXXX',
+                    'type': 'CMD_FAILED',
+                    'content': format("%s ;return %d . %s" % (self.cmd_line_buf[response['cmdIds']].cmd,response['state'],date_time)),
+                    'wTime': 1213443553
+                }
+    }
+
 Get Command data_request :
 	{
-		"token": "gh_2837e31e28ed"
+		"token": "gh_2837e31e28ed",
+		"SN"   : "XXXXXXXXXXXXXXX",      #设备SN 号
 	}
 Get Command data_response :
 	{
-		"getErroLog" : {'start': s_timeStamp,'end':e_timeStamp},
-		"updatestd"  : '',
-		"syncAttLog" : '',
-		.....
+	    "timeStamp" :  123344455,
+	    "SN"        : "XXXXXXXXXXXXXXX"     #设备SN 号
+	    "cmd_list"  :
+            {
+                "getErroLog" : {'start': s_timeStamp,'end':e_timeStamp},
+                "updatestd"  : '',
+                "syncAttLog" : '',
+                .....
+            }
 	}
+
+
+
+
+
+树莓派3 环境安装：
+
+1. apt-get install libcurl-dev
+2. pip3 install pycurl
+3. pip3 install tornado
+4. apt-get install MongoDB
+5. pip3 install pymongo
