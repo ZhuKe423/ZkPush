@@ -96,6 +96,7 @@ class ServerHandler() :
     def resp_syncAttLog(self,response):
         if response.error:
             print("Error:", response.error)
+            print("Error:", response.body)
         else:
             print("resp_syncAttLog : ", response.body)
 
