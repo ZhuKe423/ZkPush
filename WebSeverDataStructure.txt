@@ -57,9 +57,8 @@ Update User Infor data_response :
 	{
 		"state"  : 'OK',
 		"SN"   : "XXXXXXXXXXXXXXX",      #设备SN 号
-		"op_code": "add",  # other opcode: "dele"/"change"
 		"timeStamp" : 122344556        *这个必须要有，timeStamp 是用户数据更新的时间戳，不是访问时当前的时间戳， 设备这侧发现是跟上一次的时间戳值一样就会放弃修改。
-		"users" : [
+		"update_users" : [
 				{
                     'PIN'       : '1',
                     'Name'      : '陈',
@@ -70,7 +69,19 @@ Update User Infor data_response :
                     'TZ'        : '0001000100000000',   #时段(用于门禁)
 				},
 				.......
-		]
+		    ]
+		"dele_users" : [
+				{
+                    'PIN'       : '1',
+                    'Name'      : '陈',
+                    'Pri'       : '0' ,   # 权限(14 管理员,0 普通用户)
+                    'Passwd'    : '123',
+                    'Card'      : '15895470',              #用户卡号
+                    'Grp'       : '1',                  #组别(用于门禁)
+                    'TZ'        : '0001000100000000',   #时段(用于门禁)
+				},
+				.......
+		    ]
 	}
 
 Device Command Error Logs:

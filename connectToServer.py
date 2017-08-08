@@ -51,7 +51,12 @@ class ServerHandler() :
         if response.error:
             print("Error:", response.error)
         else:
-            students = json.loads(response.body)
+            #print("resp_updateStudents: ",response.body)
+            students = json.loads(str(response.body)[2:-1])
+            if ('timeStamp' not in students) :
+                print("resp_updateStuednets : invalid  response.body:",students)
+                return;
+
             if students['timeStamp']  == self.settings['last_updatestd_st'] :
                 return;
             self.stdudents_buf = []
@@ -63,12 +68,13 @@ class ServerHandler() :
             if self.dev_process == '' :
                 return
 
-            if students['op_code'] == 'add' or students['op_code'] == 'change':
+            if 'update_users' in students :
                 self.dev_process('updateUser',self.stdudents_buf)
-            elif students['op_code'] == 'dele' :
+
+            if 'dele_users' in students :
                 self.dev_process('deleteUser', self.stdudents_buf)
-            else :
-                print("resp_updateStudents : Error CMD !!!")
+
+            print("resp_updateStudents : END !!!")
 
     def newRecord(self,record,sn):
         data = {'token':ClIENT_TOKEN,'SN':sn,'record':urllib.parse.urlencode(record).encode('utf-8')}
@@ -113,17 +119,21 @@ class ServerHandler() :
         if response.error:
             print("Error:", response.error)
         else:
-            cmds = json.loads(response.body)
+            #print("resp_getServerCmd",str(response.body))
+
+            cmds = json.loads(str(response.body)[2:-1])
             print("resp_getServerCmd :" , cmds)
-            for cmd in cmds['cmd_list'] :
-                print(cmd)
-                if cmd == 'updatestd':
-                    self.updateStudents(sn='all_devices')
-                elif cmd == 'getErroLog':
-                    self.sendErrorLogs(start=cmds[cmd]['s_timeStamp'],end=cmds[cmd]['e_timeStamp'])
-                else :
-                    if self.dev_process != '' :
-                        self.dev_process(cmd,para)
+            if 'cmd_list' in cmds :
+                for cmd in cmds['cmd_list'] :
+                    print(cmd)
+                    if cmd == 'updatestd':
+                        self.updateStudents(sn='all_devices')
+                    elif cmd == 'getErroLog':
+                        self.sendErrorLogs(start=cmds[cmd]['s_timeStamp'],end=cmds[cmd]['e_timeStamp'])
+                    else :
+                        if self.dev_process != '' :
+                            self.dev_process(cmd,para)
+
 
     def sendErrorLogs(self,start,end):
         logs = self.db_handler.get_error_logs(start,end)
@@ -174,6 +184,6 @@ if __name__ == "__main__":
     data.append(record1)
     data.append(record2)
     SvHd.syncAttLog(records=data,sn=sn)
-    #SvHd.getServerCmd(sn)
+    SvHd.getServerCmd(sn)
     #SvHd.updateStudents(sn)
     IOLoop.instance().start()

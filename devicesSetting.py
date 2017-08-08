@@ -165,6 +165,12 @@ class DeviceHandler ():
             self.heart_beat.manual_sync_attLog()
         elif cmd == 'updateUser' :
             print("updateUser ",value)
+            #for infor in value:
+                #self.cmdEngine.genCmd_update_user(value)
         elif cmd == 'deleteUser' :
             print("deleteUser : ",value)
+            #for infor in value:
+                #self.cmdEngine.genCmd_delet_user(value)
+        elif cmd == 'clearAll':
+            self.cmdEngine.genCmd_clear_dataAll()
         pass
