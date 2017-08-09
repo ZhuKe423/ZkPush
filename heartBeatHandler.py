@@ -96,7 +96,7 @@ class HeartBeatHandler():
         if self.today_sync_attLog == SYNC_ATTLOG_SENDING_SERVER :
             self.set_sync_state(SYNC_ATTLOG_SENDED)
         if self.today_sync_attLog == SYNC_ATTLOG_SENDED :
-            self.cmdEngine.genCmd_clear_attLog(self.settings['SN'])
+            self.cmdEngine.genCmd_clear_attLog()
             self.set_sync_state(SYNC_ATTLOG_DONE)
 
         self.last_beat_time = t_now

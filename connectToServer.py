@@ -96,7 +96,7 @@ class ServerHandler() :
         tmpbuf = json.dumps(records)
         data = {'token':ClIENT_TOKEN,'SN':sn,'records':tmpbuf}
         data_send = urllib.parse.urlencode(data).encode('utf-8')
-        print("syncAttLog data_send2Server : ", data_send)
+        print("syncAttLog data_send2Server : ", data_send," ,records len = %d" % len(records))
         request = HTTPRequest(url=self.url_list['SyncAttLog'],method='POST', body=data_send,
                               follow_redirects=False,proxy_host='135.251.103.45', proxy_port=8080,
                               connect_timeout=200, request_timeout=600)
