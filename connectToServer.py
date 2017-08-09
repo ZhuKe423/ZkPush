@@ -33,14 +33,14 @@ class ServerHandler() :
     def __init__(self,dev_callback):
         self.url_list = Default_URL;
         self.http_client = CurlAsyncHTTPClient()
-        self.stdudents_buf = []
+        self.stdudents_update_buf = []
+        self.stdudents_dele_buf = []
         self.db_handler = DB_Handler
         self.settings = self.db_handler.get_serverConnection_setting(Default_ServerConnection_Setting)
         self.dev_process =dev_callback
 
 
     def updateStudents(self,sn):
-        self.stdudents_buf = []
         data = {'token':ClIENT_TOKEN,'SN':sn}
         data_send = urllib.parse.urlencode(data).encode('utf-8')
         request = HTTPRequest(url=self.url_list['updateStudent'],method='POST', body=data_send,
@@ -52,28 +52,30 @@ class ServerHandler() :
             print("Error:", response.error)
         else:
             #print("resp_updateStudents: ",response.body)
-            students = json.loads(str(response.body)[2:-1])
+            students = json.loads(response.body.decode('gbk'))
             if ('timeStamp' not in students) :
                 print("resp_updateStuednets : invalid  response.body:",students)
                 return;
 
             if students['timeStamp']  == self.settings['last_updatestd_st'] :
+                print("resp_updateStudents: TimeStamp is same")
                 return;
-            self.stdudents_buf = []
+            self.stdudents_update_buf = []
+            self.stdudents_dele_buf = []
             self.settings['last_updatestd_st'] = students['timeStamp']
             self.db_handler.update_serverConnection_setting(self.settings)
-            print(students)
-            self.stdudents_buf = students['users']
+            print("resp_updateStudents",students)
 
             if self.dev_process == '' :
                 return
 
             if 'update_users' in students :
-                self.dev_process('updateUser',self.stdudents_buf)
+                self.stdudents_update_buf = students['update_users']
+                self.dev_process('updateUser',self.stdudents_update_buf)
 
             if 'dele_users' in students :
-                self.dev_process('deleteUser', self.stdudents_buf)
-
+                self.stdudents_dele_buf = students['dele_users']
+                self.dev_process('deleteUser', self.stdudents_dele_buf)
             print("resp_updateStudents : END !!!")
 
     def newRecord(self,record,sn):
@@ -121,7 +123,7 @@ class ServerHandler() :
         else:
             #print("resp_getServerCmd",str(response.body))
 
-            cmds = json.loads(str(response.body)[2:-1])
+            cmds = json.loads(response.body.decode('utf-8'))
             print("resp_getServerCmd :" , cmds)
             if 'cmd_list' in cmds :
                 for cmd in cmds['cmd_list'] :
@@ -183,7 +185,7 @@ if __name__ == "__main__":
     data = []
     data.append(record1)
     data.append(record2)
-    SvHd.syncAttLog(records=data,sn=sn)
-    SvHd.getServerCmd(sn)
-    #SvHd.updateStudents(sn)
+    #SvHd.syncAttLog(records=data,sn=sn)
+    #SvHd.getServerCmd(sn)
+    SvHd.updateStudents(sn)
     IOLoop.instance().start()

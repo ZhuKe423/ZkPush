@@ -5,7 +5,7 @@ from pymongo import MongoClient
 
 class DataBaseHandler () :
     def __init__(self):
-        self.client = MongoClient('localhost',3070)
+        self.client = MongoClient('localhost',27017)
         self.db = self.client.zkpush
         self.col_names = self.db.collection_names(include_system_collections=False)
         print("MongoDB zkpush collections:")
@@ -74,6 +74,7 @@ class DataBaseHandler () :
                 self.db.heartbeatSetting.insert(default)
                 return default
             else :
+                data.pop('_id')
                 return data
         else :
             print( "Create a New collection heartbeatSetting and insert setting SN: ",default['SN'])
@@ -96,6 +97,7 @@ class DataBaseHandler () :
                 self.db.heartbeatSetting.insert(default)
                 return default
             else :
+                data.pop('_id')
                 return data
         else :
             print( "Create a New collection serverConSetting and insert setting RaspyNum: ",default['RaspyNum'])
