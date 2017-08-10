@@ -43,9 +43,12 @@ def GetDeviceHandler(sn):
         return DevicesHandler[sn]
 
 
-def Devices_Common_Process(cmd,value):
-    for sn in DevicesHandler:
-        DevicesHandler[sn].cmd_process(cmd,value)
+def Devices_Common_Process(cmd,value,sn=''):
+    if  sn != '' :
+        DevicesHandler[sn].cmd_process(cmd, value)
+    else :
+        for sn in DevicesHandler:
+            DevicesHandler[sn].cmd_process(cmd,value)
     return
 
 
@@ -165,12 +168,17 @@ class DeviceHandler ():
             self.heart_beat.manual_sync_attLog()
         elif cmd == 'updateUser' :
             print("cmd_process->updateUser ",value)
-            for infor in value:
-                self.cmdEngine.genCmd_update_user(infor)
+            if self.heart_beat.check_If_needToUpdateStu(value['timeStamp']) :
+                self.cmdEngine.genCmd_clear_dataAll()
+                for infor in value['users']:
+                    self.cmdEngine.genCmd_update_user(infor)
+
         elif cmd == 'deleteUser' :
             print("deleteUser : ",value)
-            for infor in value:
+            for infor in value['users']:
                 self.cmdEngine.genCmd_delet_user(infor)
         elif cmd == 'clearAll':
             self.cmdEngine.genCmd_clear_dataAll()
+        elif cmd == 'respSyncAttLog' :
+            self.heart_beat.check_resp_sync_attLog()
         pass

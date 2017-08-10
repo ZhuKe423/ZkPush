@@ -7,15 +7,17 @@ import datetime
 
 Default_HeartBeatSetting = {
         'SN': '',
-        'syncAttLog_Time' : '23:00:00',
-        'heartbeatLos_sec'  : (5 * 60),
-        'last_beat_time'    : 82983982,
-        'last_getCmd_Server' : 82983982,
-        'getServerCmd_inv'   : (1 * 60 * 60),
-
+        'syncAttLog_Time'           : '23:00:00',
+        'getnewlog_After_devLos'    : (5 * 60),
+        'updateStu_After_devLos'    :  (12 * 60 * 60),
+        'last_updateStu'            : 82983982, #这个值来自服务器 用户数据更新的时间戳
+        'last_beat_time'            : 82983982,
+        'last_getCmd_Server'        : 82983982,
+        'last_syncAttLog'           : 82983982,
+        'getServerCmd_inv'          : (1 * 60 * 60),
     }
 
-SYNC_ATTLOG_NOT_DO          = 0
+SYNC_ATTLOG_NOT_DO          =  0
 SYNC_ATTLOG_CMD_SENDING     =  1
 SYNC_ATTLOG_CMD_RETURN      =  2
 SYNC_ATTLOG_SENDING_SERVER  =  3
@@ -77,8 +79,11 @@ class HeartBeatHandler():
     def hearbeat(self):
         t_now = int(time.time())
         timestamp = {}
-        if (t_now - self.last_beat_time) > self.settings['heartbeatLos_sec'] :
+        if (t_now - self.last_beat_time) > self.settings['getnewlog_After_devLos'] :
             self.cmdEngine.genCmd_get_new_log();
+
+        if (t_now - self.last_beat_time) > self.settings['updateStu_After_devLos'] :
+            self.serverhandler.updateStudents(sn=self.settings['SN'],lasTime=self.settings['last_updateStu'],isForce=True)
 
         if (t_now - self.last_getCmd_Server) > self.settings['getServerCmd_inv'] :
             self.settings['last_getCmd_Server'] = t_now
@@ -86,15 +91,16 @@ class HeartBeatHandler():
             self.serverhandler.getServerCmd(sn=self.settings['SN']);
 
         if (t_now > self.sync_time_st) and (SYNC_ATTLOG_NOT_DO == self.today_sync_attLog) :
-            self.sync_cmdId = self.cmdEngine.genCmd_query_log(self.str_today_s, self.str_today_e)
+            start = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(self.settings['last_syncAttLog']))
+            end = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(t_now))
+            self.sync_cmdId = self.cmdEngine.genCmd_query_log(start, end)
             self.set_sync_state(SYNC_ATTLOG_CMD_SENDING)
+            print("SN %s : hearbeat -> SYNC_ATTLOG_CMD_SENDING" % self.settings['SN'])
             print('HB trigger_sync_attLog :  %s', time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(t_now)))
 
         if t_now > self.tomorrow_st :
             self.update_info_for_newDay()
 
-        if self.today_sync_attLog == SYNC_ATTLOG_SENDING_SERVER :
-            self.set_sync_state(SYNC_ATTLOG_SENDED)
         if self.today_sync_attLog == SYNC_ATTLOG_SENDED :
             self.cmdEngine.genCmd_clear_attLog()
             self.set_sync_state(SYNC_ATTLOG_DONE)
@@ -108,5 +114,29 @@ class HeartBeatHandler():
     def check_sync_attlog(self,response,records):
         if response['cmdIds'] == self.sync_cmdId :
             self.set_sync_state(SYNC_ATTLOG_CMD_RETURN)
+            print("SN %s : check_sync_attlog -> SYNC_ATTLOG_CMD_RETURN" % self.settings['SN'])
             self.serverhandler.syncAttLog(records,sn=self.settings['SN'])
             self.set_sync_state(SYNC_ATTLOG_SENDING_SERVER)
+            print("SN %s : check_sync_attlog -> SYNC_ATTLOG_SENDING_SERVER" % self.settings['SN'])
+
+
+    def check_If_needToUpdateStu(self,svr_time):
+        sync_time = int(svr_time)
+        if self.settings['last_updateStu'] == sync_time :
+            tmp_str = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(sync_time))
+            print("SN=%s, last update stu time stamp is same as this time %s" % (self.settings['SN'],tmp_str))
+            return False
+
+        timestamp = {'last_updateStu':sync_time}
+
+        self.db_handler.update_heartbeat_time(self.settings['SN'],timestamp)
+        self.settings['last_updateStu'] = sync_time;
+        return True;
+
+    def check_resp_sync_attLog(self):
+        if self.today_sync_attLog == SYNC_ATTLOG_SENDING_SERVER :
+            print("SN %s : check_sync_state -> SYNC_ATTLOG_SENDED" % self.settings['SN'])
+            self.set_sync_state(SYNC_ATTLOG_SENDED)
+            self.settings['last_syncAttLog']  = int(time.time())
+            timestamp = {'last_syncAttLog': self.settings['last_syncAttLog']}
+            self.db_handler.update_heartbeat_time(self.settings['SN'],timestamp)

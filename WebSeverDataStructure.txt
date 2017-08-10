@@ -52,6 +52,7 @@ Update User Infor data_request :
 	{
 		"token": "gh_2837e31e28ed"
 		"SN"   : "XXXXXXXXXXXXXXX"
+		"timeStamp" :  122344556   #这个是设备上一次的时间戳，如何时间戳跟服务器上一样，就不返回"update_users"和"dele_users"字段
 	}
 Update User Infor data_response :
 	{
@@ -110,6 +111,7 @@ Get Command data_response :
                 "getErroLog" : {'start': s_timeStamp,'end':e_timeStamp},
                 "updatestd"  : '',
                 "syncAttLog" : '',
+                "clearAll"   : '',
                 .....
             }
 	}

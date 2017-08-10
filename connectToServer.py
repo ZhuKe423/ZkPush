@@ -40,13 +40,17 @@ class ServerHandler() :
         self.dev_process =dev_callback
 
 
-    def updateStudents(self,sn):
-        data = {'token':ClIENT_TOKEN,'SN':sn}
+    def updateStudents(self,sn,lasTime = 0,isForce = False):
+        data = {'token':ClIENT_TOKEN,'SN':sn,'timeStamp':lasTime}
         data_send = urllib.parse.urlencode(data).encode('utf-8')
         request = HTTPRequest(url=self.url_list['updateStudent'],method='POST', body=data_send,
                               follow_redirects=False,proxy_host='135.251.103.45', proxy_port=8080,
                               connect_timeout=200, request_timeout=600)
-        self.http_client.fetch(request, self.resp_updateStudents)
+        if isForce :
+            self.http_client.fetch(request, self.resp_forceUpdateStudents)
+        else :
+            self.http_client.fetch(request, self.resp_updateStudents)
+
     def resp_updateStudents(self,response):
         if response.error:
             print("Error:", response.error)
@@ -57,9 +61,6 @@ class ServerHandler() :
                 print("resp_updateStuednets : invalid  response.body:",students)
                 return;
 
-            if students['timeStamp']  == self.settings['last_updatestd_st'] :
-                print("resp_updateStudents: TimeStamp is same")
-                return;
             self.stdudents_update_buf = []
             self.stdudents_dele_buf = []
             self.settings['last_updatestd_st'] = students['timeStamp']
@@ -70,13 +71,24 @@ class ServerHandler() :
                 return
 
             if 'update_users' in students :
-                self.stdudents_update_buf = students['update_users']
+                self.stdudents_update_buf = {'timeStamp': students['timeStamp'], 'users':students['update_users']}
                 self.dev_process('updateUser',self.stdudents_update_buf)
 
             if 'dele_users' in students :
-                self.stdudents_dele_buf = students['dele_users']
+                self.stdudents_dele_buf = {'timeStamp': students['timeStamp'], 'users':students['dele_users']}
                 self.dev_process('deleteUser', self.stdudents_dele_buf)
             print("resp_updateStudents : END !!!")
+
+    def resp_forceUpdateStudents(self,response):
+        if response.error:
+            print("Error:", response.error)
+        else:
+            students = json.loads(response.body.decode('gbk'))
+            if 'update_users' in students :
+                print(students['update_users'])
+                self.stdudents_update_buf = {'timeStamp': students['timeStamp'], 'users':students['update_users']}
+                self.dev_process('updateUser',value = self.stdudents_update_buf,sn=students['SN'])
+
 
     def newRecord(self,record,sn):
         data = {'token':ClIENT_TOKEN,'SN':sn,'record':urllib.parse.urlencode(record).encode('utf-8')}
@@ -107,7 +119,8 @@ class ServerHandler() :
             print("Error:", response.body)
         else:
             print("resp_syncAttLog : ", response.body)
-
+            data = json.loads(response.body.decode('utf-8'))
+            self.dev_process('respSyncAttLog', value='', sn=data['SN'])
 
     def getServerCmd(self,sn):
         data = {'token':ClIENT_TOKEN,'SN':sn}
