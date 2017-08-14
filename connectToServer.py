@@ -53,9 +53,9 @@ class ServerHandler() :
 
     def resp_updateStudents(self,response):
         if response.error:
-            print("Error:", response.error)
+            print("Error resp_updateStudents:", response.error)
         else:
-            #print("resp_updateStudents: ",response.body)
+            print("resp_updateStudents: ",response.body)
             students = json.loads(response.body.decode('gbk'))
             if ('timeStamp' not in students) :
                 print("resp_updateStuednets : invalid  response.body:",students)
@@ -70,8 +70,8 @@ class ServerHandler() :
             if self.dev_process == '' :
                 return
 
-            if 'update_users' in students :
-                self.stdudents_update_buf = {'timeStamp': students['timeStamp'], 'users':students['update_users']}
+            if 'users' in students :
+                self.stdudents_update_buf = {'timeStamp': students['timeStamp'], 'users':students['users']}
                 self.dev_process('updateUser',self.stdudents_update_buf)
 
             if 'dele_users' in students :
@@ -81,12 +81,12 @@ class ServerHandler() :
 
     def resp_forceUpdateStudents(self,response):
         if response.error:
-            print("Error:", response.error)
+            print("Error resp_forceUpdateStudents: ", response.error)
         else:
             students = json.loads(response.body.decode('gbk'))
-            if 'update_users' in students :
-                print(students['update_users'])
-                self.stdudents_update_buf = {'timeStamp': students['timeStamp'], 'users':students['update_users']}
+            if 'users' in students :
+                print(students['users'])
+                self.stdudents_update_buf = {'timeStamp': students['timeStamp'], 'users':students['users']}
                 self.dev_process('updateUser',value = self.stdudents_update_buf,sn=students['SN'])
 
 
@@ -100,7 +100,7 @@ class ServerHandler() :
         self.http_client.fetch(request, self.resp_newRecord)
     def resp_newRecord(self,response):
         if response.error:
-            print("Error:", response.error)
+            print("Error resp_newRecord:", response.error)
         else:
             print("resp_newRecord : ", response.body)
 
@@ -115,8 +115,8 @@ class ServerHandler() :
         self.http_client.fetch(request, self.resp_syncAttLog)
     def resp_syncAttLog(self,response):
         if response.error:
-            print("Error:", response.error)
-            print("Error:", response.body)
+            print("Error resp_syncAttLog:", response.error)
+            print("Error resp_syncAttLog:", response.body)
         else:
             print("resp_syncAttLog : ", response.body)
             data = json.loads(response.body.decode('utf-8'))
@@ -132,7 +132,7 @@ class ServerHandler() :
 
     def resp_getServerCmd(self,response):
         if response.error:
-            print("Error:", response.error)
+            print("Error resp_getServerCmd:", response.error)
         else:
             #print("resp_getServerCmd",str(response.body))
 
@@ -161,7 +161,7 @@ class ServerHandler() :
         self.http_client.fetch(request, self.resp_sendErrorLogs)
     def resp_sendErrorLogs(self, response):
         if response.error:
-            print("Error:", response.error)
+            print("Error resp_sendErrorLogs:", response.error)
         else:
             print(response.body)
 

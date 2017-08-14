@@ -31,8 +31,8 @@ class CMD_Engine() :
     def genCmd_update_user(self,infor):
         self.cmdIds += 1
 
-        cmd_line = format("C:%s:%s PIN=%s\tName=%s\tPri=%s\tCard=%s\n" %
-                          (str(self.cmdIds),CMD_UPDATE_DEV_USER,str(infor['PIN']),infor['Name'],infor['Pri'],
+        cmd_line = format("C:%03d:%s PIN=%s\tName=%s\tPri=%s\tCard=%s\n" %
+                          (self.cmdIds,CMD_UPDATE_DEV_USER,str(infor['PIN']),infor['Name'],infor['Pri'],
                            infor['Card']))
         self.cmd_line_buf[self.cmdIds] = {'cmd':cmd_line,'state':CMD_NOT_SEND}
         print(cmd_line)

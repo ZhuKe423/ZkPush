@@ -117,7 +117,7 @@ class DeviceHandler ():
         print("last_record_time = %s" % time.strftime("%Y-%m-%d %H:%M:%S",tmp_time))
         #print(record)
         if record == '':
-            print('recoder is NULL')
+            #print('recoder is NULL')
             return
 
         if self.heart_beat.is_in_sync_state() :
