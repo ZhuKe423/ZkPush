@@ -136,10 +136,11 @@ class ServerHandler() :
         else:
             #print("resp_getServerCmd",str(response.body))
 
-            cmds = json.loads(response.body.decode('utf-8'))
-            print("resp_getServerCmd :" , cmds)
-            if 'cmd_list' in cmds :
-                for cmd in cmds['cmd_list'] :
+            data = json.loads(response.body.decode('utf-8'))
+            print("resp_getServerCmd :" , data)
+            if 'cmd_list' in data :
+                cmds = data['cmd_list']
+                for cmd in cmds:
                     print(cmd)
                     if cmd == 'updatestd':
                         self.updateStudents(sn='all_devices')
@@ -147,7 +148,9 @@ class ServerHandler() :
                         self.sendErrorLogs(start=cmds[cmd]['s_timeStamp'],end=cmds[cmd]['e_timeStamp'])
                     else :
                         if self.dev_process != '' :
-                            self.dev_process(cmd,para)
+                            print("resp_getServerCmd: value :",cmds[cmd])
+                            value = cmds[cmd]
+                            self.dev_process(cmd,value)
 
 
     def sendErrorLogs(self,start,end):

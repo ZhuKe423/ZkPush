@@ -34,7 +34,8 @@ class HeartBeatHandler():
     str_today_e     = ''
     sync_time_st    = 0
     tomorrow_st     = 0
-    
+    initstate = False
+    manual_sync = False
     def __init__(self,sn,cmdEngine,server) :
         self.record_over_flag = False
         self.db_handler = DB_Handler
@@ -46,6 +47,8 @@ class HeartBeatHandler():
         self.cmdEngine = cmdEngine
         self.serverhandler = server
         self.update_info_for_newDay()
+        self.initstate = True
+        self.manual_sync = False
 
     def update_info_for_newDay(self):
         today = datetime.date.today()
@@ -74,9 +77,13 @@ class HeartBeatHandler():
     def manual_sync_attLog(self):
         self.sync_cmdId = self.cmdEngine.genCmd_query_log(self.str_today_s, self.str_today_e)
         self.set_sync_state(SYNC_ATTLOG_CMD_SENDING)
-        print('HB manual_sync_attLog :  %s', time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time())))
+        self.manual_sync = True
+        print('HB manual_sync_attLog : ', time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time())))
 
     def hearbeat(self):
+        if not self.initstate :
+            print("NOTE:: heartbeat : ",self.settings['SN'], "  Not ready!!!!")
+            return
         t_now = int(time.time())
         timestamp = {}
         if (t_now - self.last_beat_time) > self.settings['getnewlog_After_devLos'] :
@@ -102,8 +109,14 @@ class HeartBeatHandler():
             self.update_info_for_newDay()
 
         if self.today_sync_attLog == SYNC_ATTLOG_SENDED :
-            self.cmdEngine.genCmd_clear_attLog()
-            self.set_sync_state(SYNC_ATTLOG_DONE)
+            if  self.manual_sync :
+                self.manual_sync = False
+                self.set_sync_state(SYNC_ATTLOG_NOT_DO)
+                print('HB manual_sync : Done and today_sync_attLog=SYNC_ATTLOG_NOT_DO')
+            else :
+                self.cmdEngine.genCmd_clear_attLog()
+                self.set_sync_state(SYNC_ATTLOG_DONE)
+                print('HB sync_attLog : Done and today_sync_attLog=SYNC_ATTLOG_DONE')
 
         self.last_beat_time = t_now
         timestamp['last_beat_time'] = t_now

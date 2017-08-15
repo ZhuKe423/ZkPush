@@ -8,6 +8,12 @@ class DataBaseHandler () :
         self.client = MongoClient('localhost',27017)
         self.db = self.client.zkpush
         self.col_names = self.db.collection_names(include_system_collections=False)
+        if len(self.col_names) == 0:
+            collection = self.db.devices
+            collection = self.db.options
+            collection = self.db.errlog
+            collection = self.db.heartbeatSetting
+            collection = self.db.serverConSetting
         print("MongoDB zkpush collections:")
         print(self.col_names)
 
@@ -28,6 +34,8 @@ class DataBaseHandler () :
         return data;
 
     def update_devicesOptions(self,sn,option):
+        if '_id' in option:
+            option.pop('_id')
         option_data = option
         option_data['SN'] = sn
         print("DB:update_devicesOptions", option_data)
@@ -70,8 +78,10 @@ class DataBaseHandler () :
         if 'heartbeatSetting' in self.db.collection_names(include_system_collections=False):
             data = self.db.heartbeatSetting.find_one({"SN": default['SN']})
             if data == None :
-                print("Insert heartbeatSetting setting SN: ", default['SN'])
+                print("Insert heartbeatSetting setting SN: ", default)
                 self.db.heartbeatSetting.insert(default)
+                if '_id' in default:
+                    default.pop('_id')
                 return default
             else :
                 data.pop('_id')
@@ -79,6 +89,8 @@ class DataBaseHandler () :
         else :
             print( "Create a New collection heartbeatSetting and insert setting SN: ",default['SN'])
             self.db.heartbeatSetting.insert(default)
+            if '_id' in default:
+                default.pop('_id')
             return default
 
     def update_heartbeat_time(self,sn,timestamp):
@@ -105,6 +117,8 @@ class DataBaseHandler () :
             return default
 
     def update_serverConnection_setting(self,data):
+        if '_id' in data:
+            data.pop('_id')
         self.db.serverConSetting.update(
                     {'RaspyNum'  : data['RaspyNum']},
                     {'$set': data},
