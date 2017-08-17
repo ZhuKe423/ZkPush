@@ -7,7 +7,7 @@ from tornado.ioloop import IOLoop
 from tornado.httpclient import HTTPRequest
 from tornado.httputil import HTTPHeaders
 from databaseHandler import DB_Handler,DataBaseHandler
-
+import time
 import urllib,json
 
 Default_URL = {
@@ -19,6 +19,8 @@ Default_URL = {
         'sendErrorLogs' : 'http://www.jzk12.com/weiphp30/index.php?s=/addon/DailyTime/DailyTime/',
     }
 
+PROXY_HOST = '135.251.103.45'
+PROXY_PORT = 8080
 ClIENT_TOKEN = 'gh_2837e31e28ed'
 
 Default_ServerConnection_Setting = {
@@ -44,7 +46,7 @@ class ServerHandler() :
         data = {'token':ClIENT_TOKEN,'SN':sn,'timeStamp':lasTime}
         data_send = urllib.parse.urlencode(data).encode('utf-8')
         request = HTTPRequest(url=self.url_list['updateStudent'],method='POST', body=data_send,
-                              follow_redirects=False,proxy_host='135.251.103.45', proxy_port=8080,
+                              follow_redirects=False,proxy_host=PROXY_HOST, proxy_port=PROXY_PORT,
                               connect_timeout=200, request_timeout=600)
         if isForce :
             self.http_client.fetch(request, self.resp_forceUpdateStudents)
@@ -54,6 +56,8 @@ class ServerHandler() :
     def resp_updateStudents(self,response):
         if response.error:
             print("Error resp_updateStudents:", response.error)
+            record = {'SN': 'XXXXXX', 'type': 'HTTP_RESP_UpdateStu', 'content': response.error, 'wTime': time.time()}
+            self.db_handler.add_error_log(record)
         else:
             print("resp_updateStudents: ",response.body)
             students = json.loads(response.body.decode('gbk'))
@@ -82,6 +86,8 @@ class ServerHandler() :
     def resp_forceUpdateStudents(self,response):
         if response.error:
             print("Error resp_forceUpdateStudents: ", response.error)
+            record = {'SN': 'XXXXXX', 'type': 'HTTP_RESP_ForceUpdateStu', 'content': response.error, 'wTime': time.time()}
+            self.db_handler.add_error_log(record)
         else:
             students = json.loads(response.body.decode('gbk'))
             if 'users' in students :
@@ -95,12 +101,14 @@ class ServerHandler() :
         data_send = urllib.parse.urlencode(data).encode('utf-8')
         print("newRecord data_send2Server : ", data_send)
         request = HTTPRequest(url=self.url_list['NewRecord'],method='POST', body=data_send,
-                              follow_redirects=False,proxy_host='135.251.103.45', proxy_port=8080,
+                              follow_redirects=False,proxy_host=PROXY_HOST, proxy_port=PROXY_PORT,
                               connect_timeout=200, request_timeout=600)
         self.http_client.fetch(request, self.resp_newRecord)
     def resp_newRecord(self,response):
         if response.error:
             print("Error resp_newRecord:", response.error)
+            record = {'SN': 'XXXXXX', 'type': 'HTTP_RESP_NewRecord', 'content': response.error, 'wTime': time.time()}
+            self.db_handler.add_error_log(record)
         else:
             print("resp_newRecord : ", response.body)
 
@@ -110,13 +118,15 @@ class ServerHandler() :
         data_send = urllib.parse.urlencode(data).encode('utf-8')
         print("syncAttLog data_send2Server : ", data_send," ,records len = %d" % len(records))
         request = HTTPRequest(url=self.url_list['SyncAttLog'],method='POST', body=data_send,
-                              follow_redirects=False,proxy_host='135.251.103.45', proxy_port=8080,
+                              follow_redirects=False,proxy_host=PROXY_HOST, proxy_port=PROXY_PORT,
                               connect_timeout=200, request_timeout=600)
         self.http_client.fetch(request, self.resp_syncAttLog)
     def resp_syncAttLog(self,response):
         if response.error:
             print("Error resp_syncAttLog:", response.error)
             print("Error resp_syncAttLog:", response.body)
+            record = {'SN': 'XXXXXX', 'type': 'HTTP_RESP_SyncAttLog', 'content': response.error, 'wTime': time.time()}
+            self.db_handler.add_error_log(record)
         else:
             print("resp_syncAttLog : ", response.body)
             data = json.loads(response.body.decode('utf-8'))
@@ -126,13 +136,17 @@ class ServerHandler() :
         data = {'token':ClIENT_TOKEN,'SN':sn}
         data_send = urllib.parse.urlencode(data).encode('utf-8')
         request = HTTPRequest(url=self.url_list['GetCmd'],method='POST', body=data_send,
-                              follow_redirects=False,proxy_host='135.251.103.45', proxy_port=8080,
+                              follow_redirects=False,proxy_host=PROXY_HOST, proxy_port=PROXY_PORT,
                               connect_timeout=200, request_timeout=600)
         self.http_client.fetch(request, self.resp_getServerCmd)
 
     def resp_getServerCmd(self,response):
         if response.error:
             print("Error resp_getServerCmd:", response.error)
+            print("Error resp_getServerCmd body:", response.body)
+            # record = {'SN':'','type': '', 'content':'','wTime':}
+            record = {'SN':'XXXXXX','type':'HTTP_RESP_GetServerCmd','content':response.error,'wTime':time.time()}
+            self.db_handler.add_error_log(record)
         else:
             #print("resp_getServerCmd",str(response.body))
 
@@ -159,12 +173,14 @@ class ServerHandler() :
         data = {'token': ClIENT_TOKEN,'logs':tmpbuf}
         data_send = urllib.parse.urlencode(data).encode('utf-8')
         request = HTTPRequest(url=self.url_list['sendErrorLogs'],method='POST', body=data_send,
-                              follow_redirects=False,proxy_host='135.251.103.45', proxy_port=8080,
+                              follow_redirects=False,proxy_host=PROXY_HOST, proxy_port=PROXY_PORT,
                               connect_timeout=200, request_timeout=600)
         self.http_client.fetch(request, self.resp_sendErrorLogs)
     def resp_sendErrorLogs(self, response):
         if response.error:
             print("Error resp_sendErrorLogs:", response.error)
+            record = {'SN': 'XXXXXX', 'type': 'HTTP_RESP_SendErrorLogs', 'content': response.error, 'wTime': time.time()}
+            self.db_handler.add_error_log(record)
         else:
             print(response.body)
 
