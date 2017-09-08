@@ -127,8 +127,8 @@ class DeviceHandler ():
             print("New record :" , record)
             self.serverhandler.newRecord(record,sn=self.sn)
 
-    def get_cmd_list(self):
-        return self.cmdEngine.get_genCmd_lines();
+    def get_cmd_list(self,cmds):
+        return self.cmdEngine.get_genCmd_lines(cmds);
 
     def process_response(self,responses) :
         tmpcmd = ''
@@ -169,7 +169,7 @@ class DeviceHandler ():
         elif cmd == 'updateUser' :
             print("cmd_process->updateUser ",value)
             if self.heart_beat.check_If_needToUpdateStu(value['timeStamp']) :
-                self.cmdEngine.genCmd_clear_dataAll()
+                #self.cmdEngine.genCmd_clear_dataAll()
                 for infor in value['users']:
                     self.cmdEngine.genCmd_update_user(infor)
 

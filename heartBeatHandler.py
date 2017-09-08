@@ -64,6 +64,8 @@ class HeartBeatHandler():
         self.today_sync_attLog = SYNC_ATTLOG_NOT_DO
         print("update_dataTime_info")
 
+        self.cmdEngine.recycle_cmd_line()
+
 
     def set_record_over_flag(self,is_over):
         self.record_over_flag = is_over
@@ -144,6 +146,8 @@ class HeartBeatHandler():
 
         self.db_handler.update_heartbeat_time(self.settings['SN'],timestamp)
         self.settings['last_updateStu'] = sync_time;
+        tmp_str = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(sync_time))
+        print("SN=%s, need to update user time %s" % (self.settings['SN'], tmp_str))
         return True;
 
     def check_resp_sync_attLog(self):

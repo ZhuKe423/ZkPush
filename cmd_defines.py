@@ -31,10 +31,11 @@ class CMD_Engine() :
     def genCmd_update_user(self,infor):
         self.cmdIds += 1
 
-        cmd_line = format("C:%03d:%s PIN=%s\tName=%s\tPri=%s\tCard=%s\n" %
+        cmd_line = format("C:%04d:%s PIN=%s\tName=%s\tPri=%s\tCard=%s\n" %
                           (self.cmdIds,CMD_UPDATE_DEV_USER,str(infor['PIN']),infor['Name'],infor['Pri'],
                            infor['Card']))
-        self.cmd_line_buf[self.cmdIds] = {'cmd':cmd_line,'state':CMD_NOT_SEND}
+        tmp_key = format("%s_%04d" % (self.sn,self.cmdIds))
+        self.cmd_line_buf[tmp_key] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'sn':self.sn}
         print(cmd_line)
         print("Name def:", infor['Name'].encode())
         print("Name gbk:", infor['Name'].encode('gbk'))
@@ -43,56 +44,66 @@ class CMD_Engine() :
     def genCmd_delet_user(self,infor):
         self.cmdIds += 1
         cmd_line = format("C:%03d:%s PIN=%s\n" % (self.cmdIds,CMD_DEL_DEV_USER,infor['PIN']))
-        self.cmd_line_buf[self.cmdIds] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
+        tmp_key = format("%s_%04d" % (self.sn, self.cmdIds))
+        self.cmd_line_buf[tmp_key] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
         print(cmd_line)
 
     def genCmd_query_user(self,pin):
         self.cmdIds += 1
         cmd_line = format("C:%03d:%s PIN=%s\n" % (self.cmdIds,CMD_QUERY_DEV_USER,pin))
-        self.cmd_line_buf[self.cmdIds] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
+        tmp_key = format("%s_%04d" % (self.sn, self.cmdIds))
+        self.cmd_line_buf[tmp_key] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
         print(cmd_line)
 
     def genCmd_query_log(self,startTime,endTime):
         self.cmdIds += 1
         cmd_line = format("C:%03d:%s StartTime=%s\tEndTime=%s\n" % (self.cmdIds,CMD_QUERY_DEV_ATTLOG,startTime,endTime))
-        self.cmd_line_buf[self.cmdIds] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
+        tmp_key = format("%s_%04d" % (self.sn, self.cmdIds))
+        self.cmd_line_buf[tmp_key] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
         print(cmd_line)
         return self.cmdIds
 
     def genCmd_dev_info(self):
         self.cmdIds += 1
         cmd_line = format("C:%03d:%s\n" % (self.cmdIds, CMD_DEV_INFO))
-        self.cmd_line_buf[self.cmdIds] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
+        tmp_key = format("%s_%04d" % (self.sn, self.cmdIds))
+        self.cmd_line_buf[tmp_key] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
         print(cmd_line)
 
     def genCmd_check(self):
         self.cmdIds += 1
         cmd_line = format("C:%03d:%s\n" % (self.cmdIds, CMD_DEV_CHECK))
-        self.cmd_line_buf[self.cmdIds] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
+        tmp_key = format("%s_%04d" % (self.sn, self.cmdIds))
+        self.cmd_line_buf[tmp_key] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
         print(cmd_line)
 
     def genCmd_clear_attLog(self):
         self.cmdIds += 1
         cmd_line = format("C:%03d:%s\n" % (self.cmdIds, CMD_CLEAR_DEV_ATTLOG))
-        self.cmd_line_buf[self.cmdIds] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
+        tmp_key = format("%s_%04d" % (self.sn, self.cmdIds))
+        self.cmd_line_buf[tmp_key] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
         print(cmd_line)
 
     def genCmd_clear_dataAll(self):
         self.cmdIds += 1
         cmd_line = format("C:%03d:%s\n" % (self.cmdIds, CMD_CLEAR_DEV_ALL))
-        self.cmd_line_buf[self.cmdIds] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
+        tmp_key = format("%s_%04d" % (self.sn, self.cmdIds))
+        self.cmd_line_buf[tmp_key] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
         print(cmd_line)
 
     def genCmd_get_new_log(self):
         self.cmdIds += 1
         cmd_line = format("C:%03d:%s\n" % (self.cmdIds, CMD_GET_NEW_LOG))
-        self.cmd_line_buf[self.cmdIds] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
-        print(cmd_line)
+        tmp_key = format("%s_%04d" % (self.sn, self.cmdIds))
+        self.cmd_line_buf[tmp_key] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
+        print("SN=%s : %s" % (self.sn,cmd_line))
 
-    def get_genCmd_lines(self):
+    def get_genCmd_lines(self,cmds):
         count = 0;
-        cmds = []
         for (k,v) in self.cmd_line_buf.items():
+            print("getcmdsn=%s"  % self.sn)
+            print(k)
+            print(v)
             if v['state'] == CMD_NOT_SEND :
                 cmds.append(v['cmd'])
                 v['state'] = CMD_IN_SENDING

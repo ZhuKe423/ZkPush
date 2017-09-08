@@ -35,10 +35,11 @@ class GetrequestHandler(RequestHandler):
             GetrequestHandler.parse_device_info(self,getArgs['INFO'],dev_handler)
         else :
             dev_handler.interalBeat()
-            cmds = dev_handler.get_cmd_list()
+            cmds = []
+            dev_handler.get_cmd_list(cmds)
             for cmd in cmds:
                 self.write(cmd.encode('gbk'))
-            #self.write('C:122:INFO\n')
+                print("sn=%s cmd : %s" % (sn,cmd))
             pass
 
 
