@@ -61,7 +61,7 @@ class ServerHandler() :
             record = {'SN': 'XXXXXX', 'type': 'HTTP_RESP_UpdateStu', 'content': response.error, 'wTime': time.time()}
             self.db_handler.add_error_log(record)
         else:
-            print("resp_updateStudents: ",response.body)
+            #print("resp_updateStudents: ",response.body)
             students = json.loads(response.body.decode('gbk'))
             if ('timeStamp' not in students) :
                 print("resp_updateStuednets : invalid  response.body:",students)
@@ -71,7 +71,7 @@ class ServerHandler() :
             self.stdudents_dele_buf = []
             self.settings['last_updatestd_st'] = students['timeStamp']
             self.db_handler.update_serverConnection_setting(self.settings)
-            print("resp_updateStudents",students)
+            #print("resp_updateStudents",students)
 
             if self.dev_process == '' :
                 return
@@ -102,9 +102,11 @@ class ServerHandler() :
         data = {'token':ClIENT_TOKEN,'SN':sn,'record':urllib.parse.urlencode(record).encode('utf-8')}
         data_send = urllib.parse.urlencode(data).encode('utf-8')
         print("newRecord data_send2Server : ", data_send)
+        #request = HTTPRequest(url=self.url_list['NewRecord'],method='POST', body=data_send,
+        #                      follow_redirects=False,proxy_host=PROXY_HOST, proxy_port=PROXY_PORT,
+        #                      connect_timeout=200, request_timeout=600)
         request = HTTPRequest(url=self.url_list['NewRecord'],method='POST', body=data_send,
-                              follow_redirects=False,proxy_host=PROXY_HOST, proxy_port=PROXY_PORT,
-                              connect_timeout=200, request_timeout=600)
+                              follow_redirects=False,connect_timeout=200, request_timeout=600)
         self.http_client.fetch(request, self.resp_newRecord)
     def resp_newRecord(self,response):
         if response.error:
@@ -119,9 +121,11 @@ class ServerHandler() :
         data = {'token':ClIENT_TOKEN,'SN':sn,'records':tmpbuf}
         data_send = urllib.parse.urlencode(data).encode('utf-8')
         print("syncAttLog data_send2Server : ", data_send," ,records len = %d" % len(records))
+        #request = HTTPRequest(url=self.url_list['SyncAttLog'],method='POST', body=data_send,
+        #                      follow_redirects=False,proxy_host=PROXY_HOST, proxy_port=PROXY_PORT,
+        #                      connect_timeout=200, request_timeout=600)
         request = HTTPRequest(url=self.url_list['SyncAttLog'],method='POST', body=data_send,
-                              follow_redirects=False,proxy_host=PROXY_HOST, proxy_port=PROXY_PORT,
-                              connect_timeout=200, request_timeout=600)
+                              follow_redirects=False,connect_timeout=200, request_timeout=600)
         self.http_client.fetch(request, self.resp_syncAttLog)
     def resp_syncAttLog(self,response):
         if response.error:
@@ -137,9 +141,11 @@ class ServerHandler() :
     def getServerCmd(self,sn):
         data = {'token':ClIENT_TOKEN,'SN':sn}
         data_send = urllib.parse.urlencode(data).encode('utf-8')
+        #request = HTTPRequest(url=self.url_list['GetCmd'],method='POST', body=data_send,
+        #                      follow_redirects=False,proxy_host=PROXY_HOST, proxy_port=PROXY_PORT,
+        #                      connect_timeout=200, request_timeout=600)
         request = HTTPRequest(url=self.url_list['GetCmd'],method='POST', body=data_send,
-                              follow_redirects=False,proxy_host=PROXY_HOST, proxy_port=PROXY_PORT,
-                              connect_timeout=200, request_timeout=600)
+                            follow_redirects=False,connect_timeout=200, request_timeout=600)
         self.http_client.fetch(request, self.resp_getServerCmd)
 
     def resp_getServerCmd(self,response):
@@ -174,9 +180,11 @@ class ServerHandler() :
         tmpbuf = json.dumps(logs)
         data = {'token': ClIENT_TOKEN,'logs':tmpbuf}
         data_send = urllib.parse.urlencode(data).encode('utf-8')
+        #request = HTTPRequest(url=self.url_list['sendErrorLogs'],method='POST', body=data_send,
+        #                      follow_redirects=False,proxy_host=PROXY_HOST, proxy_port=PROXY_PORT,
+        #                      connect_timeout=200, request_timeout=600)
         request = HTTPRequest(url=self.url_list['sendErrorLogs'],method='POST', body=data_send,
-                              follow_redirects=False,proxy_host=PROXY_HOST, proxy_port=PROXY_PORT,
-                              connect_timeout=200, request_timeout=600)
+                              follow_redirects=False,connect_timeout=200, request_timeout=600)
         self.http_client.fetch(request, self.resp_sendErrorLogs)
     def resp_sendErrorLogs(self, response):
         if response.error:
