@@ -19,8 +19,8 @@ Default_URL = {
         'sendErrorLogs' : 'http://www.jzk12.com/weiphp30/index.php?s=/addon/DailyTime/DailyTime/',
     }
 
-PROXY_HOST = '135.251.103.45'
-PROXY_PORT = 8080
+#PROXY_HOST = '135.251.103.45'
+#PROXY_PORT = 8080
 ClIENT_TOKEN = 'gh_2837e31e28ed'
 
 Default_ServerConnection_Setting = {
@@ -45,9 +45,11 @@ class ServerHandler() :
     def updateStudents(self,sn,lasTime = 0,isForce = False):
         data = {'token':ClIENT_TOKEN,'SN':sn,'timeStamp':lasTime}
         data_send = urllib.parse.urlencode(data).encode('utf-8')
-        request = HTTPRequest(url=self.url_list['updateStudent'],method='POST', body=data_send,
-                              follow_redirects=False,proxy_host=PROXY_HOST, proxy_port=PROXY_PORT,
-                              connect_timeout=200, request_timeout=600)
+        #request = HTTPRequest(url=self.url_list['updateStudent'],method='POST', body=data_send,
+        #                     follow_redirects=False,proxy_host=PROXY_HOST, proxy_port=PROXY_PORT,
+        #                     connect_timeout=200, request_timeout=600)
+        request = HTTPRequest(url=self.url_list['updateStudent'], method='POST', body=data_send,
+                            follow_redirects = False,connect_timeout = 200, request_timeout = 600)
         if isForce :
             self.http_client.fetch(request, self.resp_forceUpdateStudents)
         else :

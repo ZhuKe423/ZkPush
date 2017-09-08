@@ -27,8 +27,6 @@ SYNC_ATTLOG_DONE            =  5
 class HeartBeatHandler():
     last_beat_time = 82983982
     last_getCmd_Server = 0
-    sync_cmdId = 0
-    today_sync_attLog = SYNC_ATTLOG_NOT_DO
     str_today_date  = ''
     str_today_s     = ''
     str_today_e     = ''
@@ -37,6 +35,8 @@ class HeartBeatHandler():
     initstate = False
     manual_sync = False
     def __init__(self,sn,cmdEngine,server) :
+        self.sync_cmdId = 0
+        self.today_sync_attLog = SYNC_ATTLOG_NOT_DO
         self.record_over_flag = False
         self.db_handler = DB_Handler
         self.settings = Default_HeartBeatSetting

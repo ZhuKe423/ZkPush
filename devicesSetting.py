@@ -55,27 +55,24 @@ def Devices_Common_Process(cmd,value,sn=''):
 SERVER_Handler = ServerHandler(Devices_Common_Process);
 
 class DeviceHandler ():
-    sn = ''
-    dev_info = {}
     last_record_time = 0
     last_info_time = 0
-    options = None
-    sync_attlog_records = []
 
     def __init__(self,sn) :
+        self.sync_attlog_records = []
+        self.dev_info = {}
         self.sn = sn
         self.last_record_time = int('82983982')
         self.last_info_time = int('82983982')
-        self.db_handler = DB_Handler;
+        self.db_handler = DB_Handler
         self.options = self.db_handler.get_devicesOptions(sn)
-        if (self.options == None) :
-            self.options = DefaultDeviceOptions
-            self.db_handler.update_devicesOptions(self.sn,self.options)
+        self.options = DefaultDeviceOptions
+        self.db_handler.update_devicesOptions(self.sn,self.options)
         print(self.options)
 
         self.cmdEngine = CMD_Engine(sn)
-        self.cmdEngine.genCmd_dev_info();
-        self.cmdEngine.genCmd_check();
+        self.cmdEngine.genCmd_dev_info()
+        self.cmdEngine.genCmd_check()
         self.serverhandler = SERVER_Handler
         self.heart_beat = HeartBeatHandler(sn,self.cmdEngine,self.serverhandler)
         self.serverhandler.updateStudents(sn=self.sn)
@@ -167,7 +164,7 @@ class DeviceHandler ():
         if cmd == 'syncAttLog' :
             self.heart_beat.manual_sync_attLog()
         elif cmd == 'updateUser' :
-            print("cmd_process->updateUser ",value)
+            #print("cmd_process->updateUser ",value)
             if self.heart_beat.check_If_needToUpdateStu(value['timeStamp']) :
                 #self.cmdEngine.genCmd_clear_dataAll()
                 for infor in value['users']:
