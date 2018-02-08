@@ -62,7 +62,7 @@ class HeartBeatHandler():
         self.tomorrow_st = int(time.mktime(time.strptime(strtmp, "%Y-%m-%d %H:%M:%S")))
 
         self.today_sync_attLog = SYNC_ATTLOG_NOT_DO
-        print("update_dataTime_info")
+        #print("update_dataTime_info")
 
         self.cmdEngine.recycle_cmd_line()
 
@@ -80,11 +80,11 @@ class HeartBeatHandler():
         self.sync_cmdId = self.cmdEngine.genCmd_query_log(self.str_today_s, self.str_today_e)
         self.set_sync_state(SYNC_ATTLOG_CMD_SENDING)
         self.manual_sync = True
-        print('HB manual_sync_attLog : ', time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time())))
+        #print('HB manual_sync_attLog : ', time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(time.time())))
 
     def hearbeat(self):
         if not self.initstate :
-            print("NOTE:: heartbeat : ",self.settings['SN'], "  Not ready!!!!")
+            #print("NOTE:: heartbeat : ",self.settings['SN'], "  Not ready!!!!")
             return
         t_now = int(time.time())
         timestamp = {}
@@ -104,8 +104,8 @@ class HeartBeatHandler():
             end = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(t_now))
             self.sync_cmdId = self.cmdEngine.genCmd_query_log(start, end)
             self.set_sync_state(SYNC_ATTLOG_CMD_SENDING)
-            print("SN %s : hearbeat -> SYNC_ATTLOG_CMD_SENDING" % self.settings['SN'])
-            print('HB trigger_sync_attLog :  %s', time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(t_now)))
+            #print("SN %s : hearbeat -> SYNC_ATTLOG_CMD_SENDING" % self.settings['SN'])
+            #print('HB trigger_sync_attLog :  %s', time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(t_now)))
 
         if t_now > self.tomorrow_st :
             self.update_info_for_newDay()
@@ -118,12 +118,12 @@ class HeartBeatHandler():
             else :
                 self.cmdEngine.genCmd_clear_attLog()
                 self.set_sync_state(SYNC_ATTLOG_DONE)
-                print('HB sync_attLog : Done and today_sync_attLog=SYNC_ATTLOG_DONE')
+                #print('HB sync_attLog : Done and today_sync_attLog=SYNC_ATTLOG_DONE')
 
         self.last_beat_time = t_now
         timestamp['last_beat_time'] = t_now
         self.db_handler.update_heartbeat_time(self.settings['SN'],timestamp)
-        print("hearbeat time=%s" % self.last_beat_time)
+        #print("hearbeat time=%s" % self.last_beat_time)
 
 
     def check_sync_attlog(self,response,records):
@@ -132,14 +132,14 @@ class HeartBeatHandler():
             print("SN %s : check_sync_attlog -> SYNC_ATTLOG_CMD_RETURN" % self.settings['SN'])
             self.serverhandler.syncAttLog(records,sn=self.settings['SN'])
             self.set_sync_state(SYNC_ATTLOG_SENDING_SERVER)
-            print("SN %s : check_sync_attlog -> SYNC_ATTLOG_SENDING_SERVER" % self.settings['SN'])
+            #print("SN %s : check_sync_attlog -> SYNC_ATTLOG_SENDING_SERVER" % self.settings['SN'])
 
 
     def check_If_needToUpdateStu(self,svr_time):
         sync_time = int(svr_time)
         if self.settings['last_updateStu'] == sync_time :
             tmp_str = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(sync_time))
-            print("SN=%s, last update stu time stamp is same as this time %s" % (self.settings['SN'],tmp_str))
+            #print("SN=%s, last update stu time stamp is same as this time %s" % (self.settings['SN'],tmp_str))
             return False
 
         timestamp = {'last_updateStu':sync_time}
@@ -147,12 +147,12 @@ class HeartBeatHandler():
         self.db_handler.update_heartbeat_time(self.settings['SN'],timestamp)
         self.settings['last_updateStu'] = sync_time;
         tmp_str = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(sync_time))
-        print("SN=%s, need to update user time %s" % (self.settings['SN'], tmp_str))
+        #print("SN=%s, need to update user time %s" % (self.settings['SN'], tmp_str))
         return True;
 
     def check_resp_sync_attLog(self):
         if self.today_sync_attLog == SYNC_ATTLOG_SENDING_SERVER :
-            print("SN %s : check_sync_state -> SYNC_ATTLOG_SENDED" % self.settings['SN'])
+            #print("SN %s : check_sync_state -> SYNC_ATTLOG_SENDED" % self.settings['SN'])
             self.set_sync_state(SYNC_ATTLOG_SENDED)
             self.settings['last_syncAttLog']  = int(time.time())
             timestamp = {'last_syncAttLog': self.settings['last_syncAttLog']}

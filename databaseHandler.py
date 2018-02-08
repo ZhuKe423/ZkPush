@@ -14,8 +14,8 @@ class DataBaseHandler () :
             collection = self.db.errlog
             collection = self.db.heartbeatSetting
             collection = self.db.serverConSetting
-        print("MongoDB zkpush collections:")
-        print(self.col_names)
+        #print("MongoDB zkpush collections:")
+        #print(self.col_names)
 
     def update_devicesInfo(self,sn,info):
         info_data = info
@@ -38,7 +38,7 @@ class DataBaseHandler () :
             option.pop('_id')
         option_data = option
         option_data['SN'] = sn
-        print("DB:update_devicesOptions", option_data)
+        #print("DB:update_devicesOptions", option_data)
         if 'options' in self.db.collection_names(include_system_collections=False):
             self.db.options.update(
                         {'SN'  : sn},
@@ -52,7 +52,7 @@ class DataBaseHandler () :
     def get_devicesOptions(self,sn):
         if 'options' in self.db.collection_names(include_system_collections=False):
             data = self.db.options.find_one({"SN": sn})
-            print("DB: Option: ",data)
+            #print("DB: Option: ",data)
             if data != None :
                 data.pop('_id')
                 data.pop('SN')
@@ -87,7 +87,7 @@ class DataBaseHandler () :
                 data.pop('_id')
                 return data
         else :
-            print( "Create a New collection heartbeatSetting and insert setting SN: ",default['SN'])
+            #print( "Create a New collection heartbeatSetting and insert setting SN: ",default['SN'])
             self.db.heartbeatSetting.insert(default)
             if '_id' in default:
                 default.pop('_id')
@@ -105,14 +105,14 @@ class DataBaseHandler () :
         if 'serverConSetting' in self.db.collection_names(include_system_collections=False):
             data = self.db.serverConSetting.find_one({"RaspyNum": default['RaspyNum']})
             if data == None :
-                print("Insert serverConSetting setting RaspyNum: ", default['RaspyNum'])
+                #print("Insert serverConSetting setting RaspyNum: ", default['RaspyNum'])
                 self.db.heartbeatSetting.insert(default)
                 return default
             else :
                 data.pop('_id')
                 return data
         else :
-            print( "Create a New collection serverConSetting and insert setting RaspyNum: ",default['RaspyNum'])
+            #print( "Create a New collection serverConSetting and insert setting RaspyNum: ",default['RaspyNum'])
             self.db.serverConSetting.insert(default)
             return default
 
@@ -128,7 +128,7 @@ class DataBaseHandler () :
 
     def get_all_devices(self,sn):
         data = self.db.devices.find({'SN':sn})
-        print("get_all_devices : ",data)
+        #print("get_all_devices : ",data)
         return data
 
 

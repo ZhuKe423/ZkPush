@@ -14,7 +14,7 @@ class GetrequestHandler(RequestHandler):
             'ipAddr' : info[4]
         }
         #dev_handler.updateInfor(devInfo)
-        print("getRequestInfor : " , devInfo)
+        #print("getRequestInfor : " , devInfo)
 
     def get(self, input):
         args = self.request.arguments
@@ -31,7 +31,7 @@ class GetrequestHandler(RequestHandler):
         dev_handler = GetDeviceHandler(sn)
 
         if 'INFO' in getArgs :
-            print("HeartBeatHandler get ###:")
+            #print("HeartBeatHandler get ###:")
             GetrequestHandler.parse_device_info(self,getArgs['INFO'],dev_handler)
         else :
             dev_handler.interalBeat()
@@ -39,7 +39,7 @@ class GetrequestHandler(RequestHandler):
             dev_handler.get_cmd_list(cmds)
             for cmd in cmds:
                 self.write(cmd.encode('gbk'))
-                print("sn=%s cmd : %s" % (sn,cmd))
+                #print("sn=%s cmd : %s" % (sn,cmd))
             pass
 
 

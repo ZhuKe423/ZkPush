@@ -36,7 +36,7 @@ class CMD_Engine() :
                            infor['Card']))
         tmp_key = format("%s_%04d" % (self.sn,self.cmdIds))
         self.cmd_line_buf[tmp_key] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'sn':self.sn}
-        print(cmd_line)
+        #print(cmd_line)
         #print("Name def:", infor['Name'].encode())
         #print("Name gbk:", infor['Name'].encode('gbk'))
         #print("Name utf-8:", infor['Name'].encode('utf-8'))
@@ -46,21 +46,21 @@ class CMD_Engine() :
         cmd_line = format("C:%04d:%s PIN=%s\n" % (self.cmdIds,CMD_DEL_DEV_USER,infor['PIN']))
         tmp_key = format("%s_%04d" % (self.sn, self.cmdIds))
         self.cmd_line_buf[tmp_key] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
-        print(cmd_line)
+        #print(cmd_line)
 
     def genCmd_query_user(self,pin):
         self.cmdIds += 1
         cmd_line = format("C:%04d:%s PIN=%s\n" % (self.cmdIds,CMD_QUERY_DEV_USER,pin))
         tmp_key = format("%s_%04d" % (self.sn, self.cmdIds))
         self.cmd_line_buf[tmp_key] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
-        print(cmd_line)
+        #print(cmd_line)
 
     def genCmd_query_log(self,startTime,endTime):
         self.cmdIds += 1
         cmd_line = format("C:%04d:%s StartTime=%s\tEndTime=%s\n" % (self.cmdIds,CMD_QUERY_DEV_ATTLOG,startTime,endTime))
         tmp_key = format("%s_%04d" % (self.sn, self.cmdIds))
         self.cmd_line_buf[tmp_key] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
-        print(cmd_line)
+        #print(cmd_line)
         return self.cmdIds
 
     def genCmd_dev_info(self):
@@ -68,42 +68,42 @@ class CMD_Engine() :
         cmd_line = format("C:%04d:%s\n" % (self.cmdIds, CMD_DEV_INFO))
         tmp_key = format("%s_%04d" % (self.sn, self.cmdIds))
         self.cmd_line_buf[tmp_key] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
-        print(cmd_line)
+        #print(cmd_line)
 
     def genCmd_check(self):
         self.cmdIds += 1
         cmd_line = format("C:%04d:%s\n" % (self.cmdIds, CMD_DEV_CHECK))
         tmp_key = format("%s_%04d" % (self.sn, self.cmdIds))
         self.cmd_line_buf[tmp_key] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
-        print(cmd_line)
+        #print(cmd_line)
 
     def genCmd_clear_attLog(self):
         self.cmdIds += 1
         cmd_line = format("C:%04d:%s\n" % (self.cmdIds, CMD_CLEAR_DEV_ATTLOG))
         tmp_key = format("%s_%04d" % (self.sn, self.cmdIds))
         self.cmd_line_buf[tmp_key] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
-        print(cmd_line)
+        #print(cmd_line)
 
     def genCmd_clear_dataAll(self):
         self.cmdIds += 1
         cmd_line = format("C:%04d:%s\n" % (self.cmdIds, CMD_CLEAR_DEV_ALL))
         tmp_key = format("%s_%04d" % (self.sn, self.cmdIds))
         self.cmd_line_buf[tmp_key] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
-        print(cmd_line)
+        #print(cmd_line)
 
     def genCmd_get_new_log(self):
         self.cmdIds += 1
         cmd_line = format("C:%04d:%s\n" % (self.cmdIds, CMD_GET_NEW_LOG))
         tmp_key = format("%s_%04d" % (self.sn, self.cmdIds))
         self.cmd_line_buf[tmp_key] = {'cmd':cmd_line,'state':CMD_NOT_SEND,'timestamp':time.time()}
-        print("SN=%s : %s" % (self.sn,cmd_line))
+        #print("SN=%s : %s" % (self.sn,cmd_line))
 
     def get_genCmd_lines(self,cmds):
         count = 0
         for (k,v) in self.cmd_line_buf.items():
-            print("getcmdsn=%s"  % self.sn)
-            print(k)
-            print(v)
+            #print("getcmdsn=%s"  % self.sn)
+            #print(k)
+            #print(v)
             if v['state'] == CMD_NOT_SEND :
                 cmds.append(v['cmd'])
                 v['state'] = CMD_IN_SENDING
@@ -113,7 +113,7 @@ class CMD_Engine() :
         return cmds
 
     def response_cmd_line(self,response):
-        print(response)
+        #print(response)
         tmp_key = format("%s_%04d" % (self.sn, response['cmdIds']))
         if tmp_key in self.cmd_line_buf :
             if(response['state'] == 0 ) :

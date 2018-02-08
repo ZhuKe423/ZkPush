@@ -15,7 +15,7 @@ class CdataHandler(RequestHandler):
     def process_talbes(self,table,content,dev_handler):
         if table == 'ATTLOG':
             tmp_list = content.split('\n')
-            print(tmp_list)
+            #print(tmp_list)
             for tmp_data in tmp_list:
                 if tmp_data != '' :
                     it_data = tmp_data.split('\t')
@@ -39,7 +39,7 @@ class CdataHandler(RequestHandler):
                     session = it.split('=')
                     data[session[0]] = session[1]
                 #data['Name'] = unicode(data['Name'], 'utf8')
-                print(data)
+                #print(data)
         else :
             pass
 
@@ -68,14 +68,14 @@ class CdataHandler(RequestHandler):
 
 
     def post(self, post):
-        print(self.request.body)
+        #print(self.request.body)
         content = str(self.request.body,encoding = "gbk")
         args = self.request.arguments
         getArgs = {}
         for a in args:
             getArgs[a] = self.get_argument(a)
 
-        print(getArgs)
+        #print(getArgs)
         sn = ''
         if 'SN' in getArgs :
             sn = self.get_argument('SN')
@@ -83,7 +83,7 @@ class CdataHandler(RequestHandler):
             return
 
         dev_handler = GetDeviceHandler(sn)
-        print('The checking in records data: ', content, '\n')
+        #print('The checking in records data: ', content, '\n')
 
         if 'table' in getArgs :
             CdataHandler.process_talbes(self,getArgs['table'],content,dev_handler)

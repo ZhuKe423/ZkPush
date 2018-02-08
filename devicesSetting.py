@@ -68,7 +68,7 @@ class DeviceHandler ():
         self.options = self.db_handler.get_devicesOptions(sn)
         self.options = DefaultDeviceOptions
         self.db_handler.update_devicesOptions(self.sn,self.options)
-        print(self.options)
+        #print(self.options)
 
         self.cmdEngine = CMD_Engine(sn)
         self.cmdEngine.genCmd_dev_info()
@@ -80,8 +80,8 @@ class DeviceHandler ():
     def updateInfor(self,info):
         self.dev_info = info
         last_info_time = int(time.time())
-        print(self.dev_info)
-        print("last_info_time = %d" % last_info_time)
+        #print(self.dev_info)
+        #print("last_info_time = %d" % last_info_time)
         self.db_handler.update_devicesInfo(self.sn,self.dev_info)
 
         #if self.dev_info['recordCount'] > RECORD_OVER_COUNT :
@@ -111,17 +111,17 @@ class DeviceHandler ():
         self.options['Stamp'] = str(self.last_record_time)
         self.options['ATTLOGStamp'] = str(self.last_record_time)
         self.db_handler.update_devicesOptions(self.sn,self.options)
-        print("last_record_time = %s" % time.strftime("%Y-%m-%d %H:%M:%S",tmp_time))
+        #print("last_record_time = %s" % time.strftime("%Y-%m-%d %H:%M:%S",tmp_time))
         #print(record)
         if record == '':
             #print('recoder is NULL')
             return
 
         if self.heart_beat.is_in_sync_state() :
-            print("Sync record : " , record)
+            #print("Sync record : " , record)
             self.add_sync_record(record)
         else :
-            print("New record :" , record)
+            #print("New record :" , record)
             self.serverhandler.newRecord(record,sn=self.sn)
 
     def get_cmd_list(self,cmds):
@@ -171,7 +171,7 @@ class DeviceHandler ():
                     self.cmdEngine.genCmd_update_user(infor)
 
         elif cmd == 'deleteUser' :
-            print("deleteUser : ",value)
+            #print("deleteUser : ",value)
             for infor in value['users']:
                 self.cmdEngine.genCmd_delet_user(infor)
         elif cmd == 'clearAll':
