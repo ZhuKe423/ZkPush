@@ -202,7 +202,8 @@ if __name__ == "__main__":
         #print('devProcess : ',cmd)
         #print(value)
         #print("---------------------------------")
-
+        pass
+    
     sn = '3637165101475'
     record1 = {
         'PIN': '101010101010',
