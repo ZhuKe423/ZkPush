@@ -120,7 +120,7 @@ class CMD_Engine() :
                 self.cmd_line_buf[tmp_key]['state'] = CMD_HAS_SEND
             else :
                 self.cmd_line_buf[tmp_key]['state'] = CMD_EXC_FAIL
-                date_time = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(cmd,response['timestamp']))
+                date_time = time.strftime('%Y-%m-%d %H:%M:%S',time.localtime(response['timestamp']))
                 record = {
                         'SN'  : self.sn,
                         'type': 'CMD_FAILED',

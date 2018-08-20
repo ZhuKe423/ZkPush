@@ -139,7 +139,7 @@ class HeartBeatHandler():
         sync_time = int(svr_time)
         if self.settings['last_updateStu'] == sync_time :
             tmp_str = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(sync_time))
-            #print("SN=%s, last update stu time stamp is same as this time %s" % (self.settings['SN'],tmp_str))
+            print("SN=%s, last update stu time stamp is same as this time %s" % (self.settings['SN'],tmp_str))
             return False
 
         timestamp = {'last_updateStu':sync_time}
@@ -147,7 +147,7 @@ class HeartBeatHandler():
         self.db_handler.update_heartbeat_time(self.settings['SN'],timestamp)
         self.settings['last_updateStu'] = sync_time;
         tmp_str = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(sync_time))
-        #print("SN=%s, need to update user time %s" % (self.settings['SN'], tmp_str))
+        print("SN=%s, need to update user time %s" % (self.settings['SN'], tmp_str))
         return True;
 
     def check_resp_sync_attLog(self):

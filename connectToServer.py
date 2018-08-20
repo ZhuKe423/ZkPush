@@ -71,13 +71,14 @@ class ServerHandler() :
             self.stdudents_dele_buf = []
             self.settings['last_updatestd_st'] = students['timeStamp']
             self.db_handler.update_serverConnection_setting(self.settings)
-            #print("resp_updateStudents",students)
+            #print("resp_updateStudents")
+            #print(students)
 
             if self.dev_process == '' :
                 return
 
             if 'users' in students :
-                self.stdudents_update_buf = {'timeStamp': students['timeStamp'], 'users':students['users']}
+                self.stdudents_update_buf = {'timeStamp': students['timeStamp'], 'users':students['users'],'isForce':False}
                 self.dev_process('updateUser',self.stdudents_update_buf)
 
             if 'dele_users' in students :
@@ -93,8 +94,9 @@ class ServerHandler() :
         else:
             students = json.loads(response.body.decode('gbk'))
             if 'users' in students :
+                #print("resp_forceUpdateStudents")
                 #print(students['users'])
-                self.stdudents_update_buf = {'timeStamp': students['timeStamp'], 'users':students['users']}
+                self.stdudents_update_buf = {'timeStamp': students['timeStamp'], 'users':students['users'], 'isForce':True}
                 self.dev_process('updateUser',value = self.stdudents_update_buf,sn=students['SN'])
 
 

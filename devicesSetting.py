@@ -75,7 +75,9 @@ class DeviceHandler ():
         self.cmdEngine.genCmd_check()
         self.serverhandler = SERVER_Handler
         self.heart_beat = HeartBeatHandler(sn,self.cmdEngine,self.serverhandler)
-        self.serverhandler.updateStudents(sn=self.sn)
+        self.serverhandler.updateStudents(sn=self.sn,isForce=True)
+        #self.cmdEngine.genCmd_clear_dataAll()
+        #print("clear all data")
 
     def updateInfor(self,info):
         self.dev_info = info
@@ -165,11 +167,13 @@ class DeviceHandler ():
             self.heart_beat.manual_sync_attLog()
         elif cmd == 'updateUser' :
             #print("cmd_process->updateUser ",value)
-            if self.heart_beat.check_If_needToUpdateStu(value['timeStamp']) :
-                #self.cmdEngine.genCmd_clear_dataAll()
+            if value['isForce'] :
+                self.cmdEngine.genCmd_clear_dataAll()
                 for infor in value['users']:
                     self.cmdEngine.genCmd_update_user(infor)
-
+            elif self.heart_beat.check_If_needToUpdateStu(value['timeStamp']) :
+                for infor in value['users']:
+                    self.cmdEngine.genCmd_update_user(infor)
         elif cmd == 'deleteUser' :
             #print("deleteUser : ",value)
             for infor in value['users']:

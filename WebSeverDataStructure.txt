@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+把pymongo版本降低到3.2
+
 
 New AttLog data_request :
 	{
